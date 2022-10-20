@@ -30,7 +30,7 @@ total_recompense = 0
 
 while True:
 
-    lane_pose = env.get_lane_pos(env.cur_pos, env.cur_angle)
+    lane_pose = env.get_lane_pos2(env.cur_pos, env.cur_angle)
     distance_to_road_center = lane_pose.dist
     angle_from_straight_in_rads = lane_pose.angle_rad
 
@@ -38,14 +38,14 @@ while True:
     # TODO: Décide comment calculer la vitesse et la direction
 
     k_p = 10
-    k_d = 1
+    k_d = 10
 
     # La vitesse est une valeur entre 0 et 1 (correspond à une vitesse réelle de 0 à 1,2m/s)
 
     vitesse = 0.2  # You should overwrite this value
     # l'angle du volant, c'est-à-dire le changement d'angle de la voiture en rads/s
     braquage = (
-        k_p * distance_to_road_center + k_d * angle_from_straight_in_rads
+         k_p * distance_to_road_center + k_d * angle_from_straight_in_rads
     )  # You should overwrite this value
 
     ###### Fini à remplir le code ici

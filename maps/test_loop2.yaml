@@ -1,0 +1,6 @@
+tiles:
+- [grass, grass, grass, grass, grass]
+- [grass, curve_right/N, straight/E, curve_right/E, grass]
+- [grass, straight/S, grass, straight/S, grass]
+- [grass, curve_right/W, straight/E, curve_right/S, grass]
+- [grass, grass, grass, grass, grass]
