@@ -45,7 +45,7 @@ while True:
     vitesse = 0.2  # You should overwrite this value
     # l'angle du volant, c'est-à-dire le changement d'angle de la voiture en rads/s
     braquage = (
-         k_p * distance_to_road_center + k_d * angle_from_straight_in_rads
+ 	k_p * distance_to_road_center + k_d * angle_from_straight_in_rads
     )  # You should overwrite this value
 
     ###### Fini à remplir le code ici
