@@ -1,4 +1,11 @@
-# Gym-Duckietown
+# Gym-Duckietown 
+
+Team PiedPiper
+
+Members:
+Attila Bertók I7XH6P
+István Mádi EWMK96
+Máté Meglécz A7RBKU
 
 Steps of creating the environment
 
