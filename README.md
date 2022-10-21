@@ -11,4 +11,4 @@ Steps of creating the environment
 7. We have created our own map which is https://github.com/matemeglecz/gym_duckietown/blob/milestone_1/maps/test_loop1.yaml
    ![myimage-alt-tag](/images/custom_map.png)
 8. With the following command we ran the basic control agent on our own map: `python3 ./exercises/basic_control.py --map-name maps/test_loop1`
-9. We have created a video of the basic control agent running. (/videos.basic_control.mov)
+9. We have created a video of the basic control agent running. (/videos/basic_control.mov)
