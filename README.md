@@ -10,7 +10,7 @@ István Mádi EWMK96
 
 Máté Meglécz A7RBKU
 
-
+## Milestone 1
 Steps of creating the environment
 
 1. We have created an Ubuntu virtual machine
@@ -25,6 +25,17 @@ Steps of creating the environment
 9. We have created a video of the basic control agent running. (/videos/basic_control.mov)
 
 ## Milestone 2 
+
+Firstly, we had to resolve some package version issues. The python version is upgraded to python 3.8. We have realized that the previous milestone's modifications were unneccessary (we used the wrong gym version).
+
+After that the we got the baseline_rl solution running. The solution's simulator was extended to use multiple maps for training, and also modified to not use maps which starts with "test". This baseline solution is now located in `gym-duckitown/learning` folder. The training script also logs to our Wandb project. For running this training: `python3 -m scripts.train_cnn.py --seed 123` For testing: `python3 -m scripts.test_cnn.py --seed 123`, this tests for test_map1.yaml.
+
+As suggested we started to work in a rl library. The clean_rl repo was cloned and we modified the `ddpg_continuous_action.py` so it is runnable for our simulator enviroment and this also logs to our wandb project. Command for training:
+`python cleanrl/ddpg_continuous_action.py --track False`
+
+For being able to use the new maps, with this command `python map_move_to_duckietown.py`, maps can be copied to the correct site-packages.
+
+For getting the correct python packages a `requiremnts.txt` is located in the root folder, so the packages can be installed from that. The `gym-duckietown\src` dir has to be added to the PYTHONPATH enviroment variable so python uses our version of the gym-duckietown.
 
 ### Map generation:
 
