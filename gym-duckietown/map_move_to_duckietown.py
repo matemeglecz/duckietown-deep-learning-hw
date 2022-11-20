@@ -8,7 +8,7 @@ dest_path = site.getsitepackages()[0]
 
 dest_path = dest_path + '/duckietown_world/data/gd1/maps'
 
-src_path = './gym_duckietown/maps'
+src_path = './src/gym_duckietown/maps'
 files = os.listdir(src_path)
 
 

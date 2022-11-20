@@ -10,7 +10,7 @@ from wrappers import (
 )
 
 
-def launch_env(id=None):
+def launch_env(id=None, map=""):
     env = None
     if id is None:
         from gym_duckietown.simulator import Simulator
@@ -26,6 +26,18 @@ def launch_env(id=None):
             full_transparency=True,
             distortion=True,
             randomize_maps_on_reset=True
+        )
+    elif map:
+        env = Simulator(
+            seed=123,  # random seed
+            map_name=map,
+            max_steps=500001,  # we don't want the gym to reset itself
+            domain_rand=False,
+            camera_width=640,
+            camera_height=480,
+            accept_start_angle_deg=4,  # start close to straight
+            full_transparency=True,
+            distortion=True
         )
     else:
         env = gym.make(id)

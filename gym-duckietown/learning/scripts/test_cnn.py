@@ -15,7 +15,7 @@ args = get_ddpg_args_test()
 
 file_name = "{}_{}".format(policy_name, args.seed)
 
-env = launch_env()
+env = launch_env(map="test_map1")
 
 state_dim = env.observation_space.shape
 action_dim = env.action_space.shape[0]
