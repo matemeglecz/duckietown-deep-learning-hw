@@ -1,0 +1,710 @@
+INFO:gym-duckietown:Information about the graphics card:
+ pyglet_version: [38m1.3.2
+    information: [38mdict[39m[4]
+                 [38m│ [33mvendor[39m: [38mVMware, Inc.
+                 [38m│ [33mrenderer[39m: [38mSVGA3D; build: RELEASE;  LLVM;
+                 [38m│ [33mversion[39m: [38m4.1 (Compatibility Profile) Mesa 22.0.5
+                 [38m│ [33mshading-language-version[39m: [38m4.10
+  nvidia_around: [38mFalse
+INFO:duckietown_world: data: [38m/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data
+DEBUG:gym-duckietown:loading map file "/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/maps/udem1.yaml"
+INFO:gym-duckietown:done
+DEBUG:gym-duckietown:loading mesh 'duckiebot' from file_path '/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/duckiebot/duckiebot.obj'
+DEBUG:gym-duckietown:loading materials from /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/duckiebot/duckiebot.mtl
+DEBUG:gym-duckietown:loading texture: /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/duckiebot/circlegrid-square.jpg
+DEBUG:gym-duckietown:loading texture: /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/duckie/duckie.png
+DEBUG:gym-duckietown:loading mesh 'tree' from file_path '/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/tree/tree.obj'
+DEBUG:gym-duckietown:loading materials from /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/tree/tree.mtl
+DEBUG:gym-duckietown:loading mesh 'duckie' from file_path '/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/duckie/duckie.obj'
+DEBUG:gym-duckietown:loading mesh 'sign_generic' from file_path '/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/signs/sign_generic/sign_generic.obj'
+DEBUG:gym-duckietown:loading materials from /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/signs/sign_generic/sign_generic.mtl
+DEBUG:gym-duckietown:loading texture: /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/signs/sign_stop/sign_stop.png
+DEBUG:gym-duckietown:loading texture: /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/signs/wood_osb.jpg
+DEBUG:gym-duckietown:loading mesh 'sign_generic' from file_path '/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/signs/sign_generic/sign_generic.obj'
+DEBUG:gym-duckietown:loading materials from /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/signs/sign_generic/sign_generic.mtl
+DEBUG:gym-duckietown:loading texture: /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/signs/sign_left_T_intersect/sign_left_T_intersect.png
+DEBUG:gym-duckietown:loading mesh 'sign_generic' from file_path '/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/signs/sign_generic/sign_generic.obj'
+DEBUG:gym-duckietown:loading materials from /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/signs/sign_generic/sign_generic.mtl
+DEBUG:gym-duckietown:loading texture: /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/signs/sign_right_T_intersect/sign_right_T_intersect.png
+DEBUG:gym-duckietown:loading mesh 'sign_generic' from file_path '/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/signs/sign_generic/sign_generic.obj'
+DEBUG:gym-duckietown:loading materials from /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/signs/sign_generic/sign_generic.mtl
+DEBUG:gym-duckietown:loading texture: /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/signs/sign_T_intersect/sign_T_intersect.png
+DEBUG:gym-duckietown:loading mesh 'house' from file_path '/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/house/house.obj'
+DEBUG:gym-duckietown:loading materials from /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/house/house.mtl
+DEBUG:gym-duckietown:loading texture: /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/house/house.png
+DEBUG:gym-duckietown:loading mesh 'truck' from file_path '/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/truck/truck.obj'
+DEBUG:gym-duckietown:loading texture: /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/truck/truck.png
+DEBUG:gym-duckietown:loading mesh 'bus' from file_path '/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/bus/bus.obj'
+DEBUG:gym-duckietown:loading texture: /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/meshes/bus/bus.png
+INFO:gym-duckietown:Random map chosen: map1
+DEBUG:gym-duckietown:loading map file "/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/maps/map1.yaml"
+INFO:gym-duckietown:done
+DEBUG:gym-duckietown:loading texture: /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/textures/tiles-processed/photos/grass/texture.jpg
+DEBUG:gym-duckietown:loading texture: /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/textures/tiles-processed/photos/curve_left/texture.jpg
+DEBUG:gym-duckietown:loading texture: /home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/textures/tiles-processed/photos/straight/texture.jpg
+INFO:gym-duckietown:Starting at [1.39662729 0.         3.31126366] 3.178781748647519
+INFO:gym-duckietown:Random map chosen: map2
+DEBUG:gym-duckietown:loading map file "/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/maps/map2.yaml"
+INFO:gym-duckietown:done
+DEBUG:gym-duckietown:[2.90865483 0.         0.56379548] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a29c1f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.85720594 0.         0.64661614]
+DEBUG:gym-duckietown:l_pos: [2.90865483 0.         0.56379548]
+DEBUG:gym-duckietown:r_pos: [2.80575704 0.         0.72943679]
+DEBUG:gym-duckietown:f_pos: [2.95659073 0.         0.70835481]
+INFO:gym-duckietown:Starting at [2.36692876 0.         0.87023888] 6.223794601217581
+2
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+DEBUG:gym-duckietown:[2.9297231  0.         0.91793988] corresponds to tile at (5, 1) which is not drivable: {'coords': (5, 1), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf22310>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.0
+DEBUG:gym-duckietown:pos: [2.84020889 0.         0.90860147]
+DEBUG:gym-duckietown:l_pos: [2.8479909 0.        0.8340063]
+DEBUG:gym-duckietown:r_pos: [2.83242688 0.         0.98319665]
+DEBUG:gym-duckietown:f_pos: [2.9297231  0.         0.91793988]
+INFO:gym-duckietown:Random map chosen: map2
+DEBUG:gym-duckietown:loading map file "/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/maps/map2.yaml"
+INFO:gym-duckietown:done
+DEBUG:gym-duckietown:[2.82948925 0.         0.53880439] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf457f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.76689601 0.         0.61355957]
+DEBUG:gym-duckietown:l_pos: [2.70430277 0.         0.68831475]
+DEBUG:gym-duckietown:r_pos: [2.82948925 0.         0.53880439]
+DEBUG:gym-duckietown:f_pos: [2.6771898  0.         0.53844768]
+DEBUG:gym-duckietown:[2.93585974 0.         0.59625091] corresponds to tile at (5, 1) which is not drivable: {'coords': (5, 1), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf45100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.90313642 0.         0.68809553]
+DEBUG:gym-duckietown:l_pos: [2.87041309 0.         0.77994015]
+DEBUG:gym-duckietown:r_pos: [2.93585974 0.         0.59625091]
+DEBUG:gym-duckietown:f_pos: [2.79292288 0.         0.64882754]
+DEBUG:gym-duckietown:[2.66032815 0.         0.57772371] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf457f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.70888382 0.         0.66227309]
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+DEBUG:gym-duckietown:l_pos: [2.66032815 0.         0.57772371]
+DEBUG:gym-duckietown:r_pos: [2.75743949 0.         0.74682246]
+DEBUG:gym-duckietown:f_pos: [2.81034307 0.         0.60400628]
+DEBUG:gym-duckietown:[2.99987486 0.         0.80157493] corresponds to tile at (5, 1) which is not drivable: {'coords': (5, 1), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf45100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.90802639 0.         0.83428747]
+DEBUG:gym-duckietown:l_pos: [2.81617793 0.         0.86700001]
+DEBUG:gym-duckietown:r_pos: [2.99987486 0.         0.80157493]
+DEBUG:gym-duckietown:f_pos: [2.86877135 0.         0.72406932]
+DEBUG:gym-duckietown:[2.58531116 0.         0.53082079] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf457f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.63825367 0.         0.63515721]
+DEBUG:gym-duckietown:l_pos: [2.55130665 0.         0.67927598]
+DEBUG:gym-duckietown:r_pos: [2.72520069 0.         0.59103845]
+DEBUG:gym-duckietown:f_pos: [2.58531116 0.         0.53082079]
+DEBUG:gym-duckietown:[2.67698029 0.         0.57671141] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf457f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.59721076 0.         0.63277451]
+DEBUG:gym-duckietown:l_pos: [2.51744123 0.         0.68883762]
+DEBUG:gym-duckietown:r_pos: [2.67698029 0.         0.57671141]
+DEBUG:gym-duckietown:f_pos: [2.52993503 0.         0.53705107]
+DEBUG:gym-duckietown:[2.92851145 0.         1.07644072] corresponds to tile at (5, 1) which is not drivable: {'coords': (5, 1), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf45100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.83805591 0.         1.11282815]
+DEBUG:gym-duckietown:l_pos: [2.74760036 0.         1.14921558]
+DEBUG:gym-duckietown:r_pos: [2.92851145 0.         1.07644072]
+DEBUG:gym-duckietown:f_pos: [2.79439099 0.         1.0042815 ]
+DEBUG:gym-duckietown:[2.95459025 0.         0.56200575] corresponds to tile at (5, 0) which is not drivable: {'coords': (5, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf452e0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.87519701 0.         0.61860048]
+DEBUG:gym-duckietown:l_pos: [2.79580377 0.         0.67519521]
+DEBUG:gym-duckietown:r_pos: [2.95459025 0.         0.56200575]
+DEBUG:gym-duckietown:f_pos: [2.80728333 0.         0.52332859]
+DEBUG:gym-duckietown:[2.69272543 0.         0.54238134] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf457f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.75146657 0.         0.64356671]
+DEBUG:gym-duckietown:l_pos: [2.66714544 0.         0.69251766]
+DEBUG:gym-duckietown:r_pos: [2.83578771 0.         0.59461575]
+DEBUG:gym-duckietown:f_pos: [2.69272543 0.         0.54238134]
+DEBUG:gym-duckietown:[2.98326945 0.         0.65837675] corresponds to tile at (5, 1) which is not drivable: {'coords': (5, 1), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf45100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.90569329 0.         0.71743765]
+DEBUG:gym-duckietown:l_pos: [2.98326945 0.         0.65837675]
+DEBUG:gym-duckietown:r_pos: [2.82811713 0.         0.77649854]
+DEBUG:gym-duckietown:f_pos: [2.97656636 0.         0.81052904]
+DEBUG:gym-duckietown:[2.37782002 0.         0.57693981] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf457f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.37782002 0.         0.57693981]
+DEBUG:gym-duckietown:l_pos: [2.43839631 0.         0.5005411 ]
+DEBUG:gym-duckietown:r_pos: [2.31724373 0.         0.65333852]
+DEBUG:gym-duckietown:f_pos: [2.46949847 0.         0.64963136]
+DEBUG:gym-duckietown:[2.58179548 0.         0.54965669] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf457f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.63201776 0.         0.65532941]
+DEBUG:gym-duckietown:l_pos: [2.54395716 0.         0.6971813 ]
+DEBUG:gym-duckietown:r_pos: [2.72007836 0.         0.61347751]
+DEBUG:gym-duckietown:f_pos: [2.58179548 0.         0.54965669]
+DEBUG:gym-duckietown:[2.74777484 0.         0.53489824] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf457f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.68887184 0.         0.61259436]
+DEBUG:gym-duckietown:l_pos: [2.62996883 0.         0.69029047]
+DEBUG:gym-duckietown:r_pos: [2.74777484 0.         0.53489824]
+DEBUG:gym-duckietown:f_pos: [2.5956365  0.         0.54191075]
+DEBUG:gym-duckietown:[2.74828786 0.         0.55197141] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf457f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.67413012 0.         0.61527133]
+DEBUG:gym-duckietown:l_pos: [2.74828786 0.         0.55197141]
+DEBUG:gym-duckietown:r_pos: [2.59997238 0.         0.67857125]
+DEBUG:gym-duckietown:f_pos: [2.75009003 0.         0.70426061]
+DEBUG:gym-duckietown:[2.48158476 0.         0.57324626] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf457f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.48158476 0.         0.57324626]
+DEBUG:gym-duckietown:l_pos: [2.56465881 0.         0.52220753]
+DEBUG:gym-duckietown:r_pos: [2.39851071 0.         0.62428499]
+DEBUG:gym-duckietown:f_pos: [2.54283124 0.         0.67293512]
+DEBUG:gym-duckietown:[2.98396908 0.         0.79982636] corresponds to tile at (5, 1) which is not drivable: {'coords': (5, 1), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf45100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.89308376 0.         0.76452608]
+DEBUG:gym-duckietown:l_pos: [2.98396908 0.         0.79982636]
+DEBUG:gym-duckietown:r_pos: [2.80219845 0.         0.7292258 ]
+DEBUG:gym-duckietown:f_pos: [2.85072343 0.         0.87358846]
+DEBUG:gym-duckietown:[2.99062582 0.         0.79914218] corresponds to tile at (5, 1) which is not drivable: {'coords': (5, 1), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf45100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.87454823 0.         0.81380483]
+DEBUG:gym-duckietown:l_pos: [2.86232936 0.         0.7170735 ]
+DEBUG:gym-duckietown:r_pos: [2.8867671  0.         0.91053615]
+DEBUG:gym-duckietown:f_pos: [2.99062582 0.         0.79914218]
+DEBUG:gym-duckietown:[2.4248182  0.         0.51701831] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf457f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.44197766 0.         0.61299645]
+DEBUG:gym-duckietown:l_pos: [2.4248182  0.         0.51701831]
+DEBUG:gym-duckietown:r_pos: [2.45913712 0.         0.70897459]
+DEBUG:gym-duckietown:f_pos: [2.55715142 0.         0.5924051 ]
+DEBUG:gym-duckietown:[2.74459833 0.         0.5778502 ] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf457f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.74459833 0.         0.5778502 ]
+DEBUG:gym-duckietown:l_pos: [2.840644   0.         0.59462755]
+DEBUG:gym-duckietown:r_pos: [2.64855266 0.         0.56107285]
+DEBUG:gym-duckietown:f_pos: [2.72446551 0.         0.693105  ]
+DEBUG:gym-duckietown:[2.74216941 0.         0.57495487] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf457f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.64571764 0.         0.58921343]
+DEBUG:gym-duckietown:l_pos: [2.74216941 0.         0.57495487]
+DEBUG:gym-duckietown:r_pos: [2.54926588 0.         0.603472  ]
+DEBUG:gym-duckietown:f_pos: [2.66282793 0.         0.70495555]
+DEBUG:gym-duckietown:[2.97179178 0.         0.87496164] corresponds to tile at (5, 1) which is not drivable: {'coords': (5, 1), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf45100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.91166912 0.         0.79820543]
+DEBUG:gym-duckietown:l_pos: [2.97179178 0.         0.87496164]
+DEBUG:gym-duckietown:r_pos: [2.85154647 0.         0.72144921]
+DEBUG:gym-duckietown:f_pos: [2.81956167 0.         0.87035261]
+INFO:gym-duckietown:Starting at [2.46557117 0.         0.93833717] 5.803168094004142
+---------------------------------------------------------------------------------
+DEBUG:gym-duckietown:[2.9261897  0.         1.17916198] corresponds to tile at (5, 2) which is not drivable: {'coords': (5, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf45070>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.0
+DEBUG:gym-duckietown:pos: [2.84655832 0.         1.1372234 ]
+DEBUG:gym-duckietown:l_pos: [2.88150714 0.         1.07086392]
+DEBUG:gym-duckietown:r_pos: [2.81160951 0.         1.20358288]
+DEBUG:gym-duckietown:f_pos: [2.9261897  0.         1.17916198]
+INFO:gym-duckietown:Random map chosen: map2
+DEBUG:gym-duckietown:loading map file "/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/maps/map2.yaml"
+INFO:gym-duckietown:done
+DEBUG:gym-duckietown:[2.80068185 0.         0.57755977] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf37790>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.72646285 0.         0.64078785]
+DEBUG:gym-duckietown:l_pos: [2.80068185 0.         0.57755977]
+DEBUG:gym-duckietown:r_pos: [2.65224385 0.         0.70401592]
+DEBUG:gym-duckietown:f_pos: [2.80233654 0.         0.72985065]
+DEBUG:gym-duckietown:[2.60781409 0.         0.57510426] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf37790>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.53885719 0.         0.66962382]
+DEBUG:gym-duckietown:l_pos: [2.4600909  0.         0.61215974]
+DEBUG:gym-duckietown:r_pos: [2.61762349 0.         0.7270879 ]
+DEBUG:gym-duckietown:f_pos: [2.60781409 0.         0.57510426]
+DEBUG:gym-duckietown:[2.44346066 0.         0.5812973 ] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf37790>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.37158491 0.         0.64717694]
+DEBUG:gym-duckietown:l_pos: [2.44346066 0.         0.5812973 ]
+DEBUG:gym-duckietown:r_pos: [2.29970917 0.         0.71305659]
+DEBUG:gym-duckietown:f_pos: [2.45064049 0.         0.73342783]
+DEBUG:gym-duckietown:[2.65153199 0.         0.56521819] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf37790>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.69827646 0.         0.65078222]
+DEBUG:gym-duckietown:l_pos: [2.65153199 0.         0.56521819]
+DEBUG:gym-duckietown:r_pos: [2.74502093 0.         0.73634626]
+DEBUG:gym-duckietown:f_pos: [2.80095331 0.         0.59468886]
+DEBUG:gym-duckietown:[2.84663166 0.         0.56897695] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf37790>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.84663166 0.         0.56897695]
+DEBUG:gym-duckietown:l_pos: [2.94379263 0.         0.57710074]
+DEBUG:gym-duckietown:r_pos: [2.74947069 0.         0.56085315]
+DEBUG:gym-duckietown:f_pos: [2.8368831  0.         0.68557011]
+---------------------------------------------------------------------------------
+DEBUG:gym-duckietown:r_pos: [2.31883489 0.         1.06114015]
+DEBUG:gym-duckietown:f_pos: [2.31727276 0.         1.21343201]
+DEBUG:gym-duckietown:[2.60456274 0.         0.54984788] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf37790>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.56285812 0.         0.63797832]
+DEBUG:gym-duckietown:l_pos: [2.60456274 0.         0.54984788]
+DEBUG:gym-duckietown:r_pos: [2.52115349 0.         0.72610876]
+DEBUG:gym-duckietown:f_pos: [2.66861464 0.         0.68802386]
+DEBUG:gym-duckietown:[2.54683308 0.         0.49981918] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf37790>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.54333076 0.         0.61676674]
+DEBUG:gym-duckietown:l_pos: [2.44587446 0.         0.61384815]
+DEBUG:gym-duckietown:r_pos: [2.64078707 0.         0.61968534]
+DEBUG:gym-duckietown:f_pos: [2.54683308 0.         0.49981918]
+DEBUG:gym-duckietown:[2.86337765 0.         0.56509422] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf37790>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.86337765 0.         0.56509422]
+DEBUG:gym-duckietown:l_pos: [2.95952281 0.         0.5812917 ]
+DEBUG:gym-duckietown:r_pos: [2.76723249 0.         0.54889674]
+DEBUG:gym-duckietown:f_pos: [2.84394067 0.         0.68046841]
+INFO:gym-duckietown:Starting at [2.76539971 0.         0.80941541] 2.190643585260528
+---------------------------------------------------------------------------------
+DEBUG:gym-duckietown:[2.61707257 0.         0.58198089] corresponds to tile at (4, 0) which is not drivable: {'coords': (4, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf37790>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.0
+DEBUG:gym-duckietown:pos: [2.66454593 0.         0.65844187]
+DEBUG:gym-duckietown:l_pos: [2.60082845 0.         0.698003  ]
+DEBUG:gym-duckietown:r_pos: [2.72826341 0.         0.61888074]
+DEBUG:gym-duckietown:f_pos: [2.61707257 0.         0.58198089]
+INFO:gym-duckietown:Random map chosen: map1
+DEBUG:gym-duckietown:loading map file "/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/maps/map1.yaml"
+INFO:gym-duckietown:done
+DEBUG:gym-duckietown:[1.98069118 0.         1.71695708] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2af0a0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.03849627 0.         1.79547345]
+DEBUG:gym-duckietown:l_pos: [2.09630137 0.         1.87398982]
+DEBUG:gym-duckietown:r_pos: [1.98069118 0.         1.71695708]
+DEBUG:gym-duckietown:f_pos: [1.94427663 0.         1.86483956]
+DEBUG:gym-duckietown:[2.02624195 0.         1.74170013] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2af0a0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.02624195 0.         1.74170013]
+DEBUG:gym-duckietown:l_pos: [2.12371105 0.         1.74415451]
+DEBUG:gym-duckietown:r_pos: [1.92877285 0.         1.73924574]
+DEBUG:gym-duckietown:f_pos: [2.02329669 0.         1.85866305]
+DEBUG:gym-duckietown:[1.73754942 0.         1.86277567] corresponds to tile at (2, 3) which is not drivable: {'coords': (2, 3), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2af940>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.79610199 0.         1.94073621]
+DEBUG:gym-duckietown:l_pos: [1.73754942 0.         1.86277567]
+DEBUG:gym-duckietown:r_pos: [1.85465456 0.         2.01869676]
+DEBUG:gym-duckietown:f_pos: [1.88965464 0.         1.87047313]
+DEBUG:gym-duckietown:[1.77928238 0.         1.69761771] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2af0a0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.83264623 0.         1.77921764]
+DEBUG:gym-duckietown:l_pos: [1.77928238 0.         1.69761771]
+DEBUG:gym-duckietown:r_pos: [1.88601008 0.         1.86081757]
+DEBUG:gym-duckietown:f_pos: [1.93056615 0.         1.71518102]
+DEBUG:gym-duckietown:[1.75314614 0.         1.95537327] corresponds to tile at (2, 3) which is not drivable: {'coords': (2, 3), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2af940>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.79638481 0.         2.0427613 ]
+DEBUG:gym-duckietown:l_pos: [1.75314614 0.         1.95537327]
+DEBUG:gym-duckietown:r_pos: [1.83962349 0.         2.13014932]
+DEBUG:gym-duckietown:f_pos: [1.90125044 0.         1.99087489]
+DEBUG:gym-duckietown:[1.67528193 0.         1.97763209] corresponds to tile at (2, 3) which is not drivable: {'coords': (2, 3), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2af940>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.77074497 0.         1.9974578 ]
+DEBUG:gym-duckietown:l_pos: [1.866208  0.        2.0172835]
+DEBUG:gym-duckietown:r_pos: [1.67528193 0.         1.97763209]
+DEBUG:gym-duckietown:f_pos: [1.74695412 0.         2.11201344]
+DEBUG:gym-duckietown:[1.74789566 0.         2.01309999] corresponds to tile at (2, 3) which is not drivable: {'coords': (2, 3), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2af940>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.8481255  0.         1.95274288]
+DEBUG:gym-duckietown:l_pos: [1.89842309 0.         2.03626774]
+DEBUG:gym-duckietown:r_pos: [1.7978279  0.         1.86921802]
+DEBUG:gym-duckietown:f_pos: [1.74789566 0.         2.01309999]
+DEBUG:gym-duckietown:[2.29302365 0.         1.7385447 ] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2af0a0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.29302365 0.         1.7385447 ]
+DEBUG:gym-duckietown:l_pos: [2.37417379 0.         1.68449931]
+DEBUG:gym-duckietown:r_pos: [2.21187351 0.         1.7925901 ]
+DEBUG:gym-duckietown:f_pos: [2.35787813 0.         1.83592487]
+DEBUG:gym-duckietown:[1.68620002 0.         2.02788588] corresponds to tile at (2, 3) which is not drivable: {'coords': (2, 3), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2af940>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.78363579 0.         2.02434758]
+DEBUG:gym-duckietown:l_pos: [1.68620002 0.         2.02788588]
+DEBUG:gym-duckietown:r_pos: [1.88107157 0.         2.02080929]
+DEBUG:gym-duckietown:f_pos: [1.77938983 0.         1.90742465]
+DEBUG:gym-duckietown:[1.68368474 0.         1.97637025] corresponds to tile at (2, 3) which is not drivable: {'coords': (2, 3), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2af940>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.78118339 0.         1.97585752]
+DEBUG:gym-duckietown:l_pos: [1.87868204 0.         1.9753448 ]
+DEBUG:gym-duckietown:r_pos: [1.68368474 0.         1.97637025]
+DEBUG:gym-duckietown:f_pos: [1.78179866 0.         2.09285591]
+DEBUG:gym-duckietown:[1.71468665 0.         2.15572528] corresponds to tile at (2, 3) which is not drivable: {'coords': (2, 3), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2af940>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.79661484 0.         2.20858379]
+DEBUG:gym-duckietown:l_pos: [1.71468665 0.         2.15572528]
+DEBUG:gym-duckietown:r_pos: [1.87854303 0.         2.2614423 ]
+DEBUG:gym-duckietown:f_pos: [1.86004505 0.         2.11026997]
+DEBUG:gym-duckietown:[2.14705935 0.         1.69561963] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2af0a0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.08907802 0.         1.77400595]
+DEBUG:gym-duckietown:l_pos: [2.03109668 0.         1.85239227]
+DEBUG:gym-duckietown:r_pos: [2.14705935 0.         1.69561963]
+DEBUG:gym-duckietown:f_pos: [1.99501443 0.         1.70442835]
+INFO:gym-duckietown:Starting at [2.07153838 0.         2.21215981] 1.2259465569029904
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+DEBUG:gym-duckietown:[2.25001852 0.         1.75126695] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2af0a0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.0
+DEBUG:gym-duckietown:pos: [2.2161266  0.         1.83464163]
+DEBUG:gym-duckietown:l_pos: [2.1466477  0.         1.80639837]
+DEBUG:gym-duckietown:r_pos: [2.2856055 0.        1.8628849]
+DEBUG:gym-duckietown:f_pos: [2.25001852 0.         1.75126695]
+INFO:gym-duckietown:Random map chosen: map2
+DEBUG:gym-duckietown:loading map file "/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/maps/map2.yaml"
+INFO:gym-duckietown:done
+DEBUG:gym-duckietown:[1.73702965 0.         1.76892925] corresponds to tile at (2, 3) which is not drivable: {'coords': (2, 3), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2ae4f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.73702965 0.         1.76892925]
+DEBUG:gym-duckietown:l_pos: [1.68638492 0.         1.68561442]
+DEBUG:gym-duckietown:r_pos: [1.78767438 0.         1.85224408]
+DEBUG:gym-duckietown:f_pos: [1.83700745 0.         1.70815557]
+DEBUG:gym-duckietown:[2.33728393 0.         1.70400294] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf45ac0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.2737068  0.         1.77792316]
+DEBUG:gym-duckietown:l_pos: [2.33728393 0.         1.70400294]
+DEBUG:gym-duckietown:r_pos: [2.21012967 0.         1.85184337]
+DEBUG:gym-duckietown:f_pos: [2.36241106 0.         1.85421571]
+DEBUG:gym-duckietown:[1.71474537 0.         2.06907832] corresponds to tile at (2, 3) which is not drivable: {'coords': (2, 3), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2ae4f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.82144497 0.         2.11708035]
+DEBUG:gym-duckietown:l_pos: [1.78144327 0.         2.20599669]
+DEBUG:gym-duckietown:r_pos: [1.86144667 0.         2.02816402]
+DEBUG:gym-duckietown:f_pos: [1.71474537 0.         2.06907832]
+DEBUG:gym-duckietown:[2.24120911 0.         1.70248766] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf45ac0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.21107132 0.         1.79521286]
+DEBUG:gym-duckietown:l_pos: [2.24120911 0.         1.70248766]
+DEBUG:gym-duckietown:r_pos: [2.18093353 0.         1.88793807]
+DEBUG:gym-duckietown:f_pos: [2.32234157 0.         1.83137821]
+DEBUG:gym-duckietown:[2.21849529 0.         1.70148329] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf45ac0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.24077342 0.         1.79640397]
+DEBUG:gym-duckietown:r_pos: [1.98749024 0.         1.9412685 ]
+DEBUG:gym-duckietown:f_pos: [2.09898171 0.         1.83751446]
+DEBUG:gym-duckietown:[1.72441972 0.         2.03154023] corresponds to tile at (2, 3) which is not drivable: {'coords': (2, 3), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2ae4f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.81952392 0.         2.01005901]
+DEBUG:gym-duckietown:l_pos: [1.91462811 0.         1.98857779]
+DEBUG:gym-duckietown:r_pos: [1.72441972 0.         2.03154023]
+DEBUG:gym-duckietown:f_pos: [1.84530138 0.         2.12418404]
+DEBUG:gym-duckietown:[1.99562004 0.         1.75183389] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf45ac0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.04506674 0.         1.83586527]
+DEBUG:gym-duckietown:l_pos: [1.99562004 0.         1.75183389]
+DEBUG:gym-duckietown:r_pos: [2.09451345 0.         1.91989666]
+DEBUG:gym-duckietown:f_pos: [2.1459044  0.         1.77652923]
+DEBUG:gym-duckietown:[1.73096895 0.         2.22680416] corresponds to tile at (2, 3) which is not drivable: {'coords': (2, 3), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2ae4f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.80896983 0.         2.28530298]
+DEBUG:gym-duckietown:l_pos: [1.73096895 0.         2.22680416]
+DEBUG:gym-duckietown:r_pos: [1.88697071 0.         2.3438018 ]
+DEBUG:gym-duckietown:f_pos: [1.87916842 0.         2.19170192]
+DEBUG:gym-duckietown:[1.9477421 0.        1.7310823] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf45ac0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.95546721 0.         1.82827578]
+DEBUG:gym-duckietown:l_pos: [1.9477421 0.        1.7310823]
+DEBUG:gym-duckietown:r_pos: [1.96319233 0.         1.92546926]
+DEBUG:gym-duckietown:f_pos: [2.07209939 0.         1.81900564]
+DEBUG:gym-duckietown:[1.74879956 0.         2.41827344] corresponds to tile at (2, 4) which is not drivable: {'coords': (2, 4), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2ae1c0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.78732455 0.         2.32870741]
+DEBUG:gym-duckietown:l_pos: [1.82584954 0.         2.23914137]
+DEBUG:gym-duckietown:r_pos: [1.74879956 0.         2.41827344]
+DEBUG:gym-duckietown:f_pos: [1.8948038  0.         2.37493739]
+DEBUG:gym-duckietown:[1.68737434 0.         2.24532283] corresponds to tile at (2, 3) which is not drivable: {'coords': (2, 3), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2ae4f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.78433984 0.         2.25551803]
+DEBUG:gym-duckietown:l_pos: [1.88130534 0.         2.26571324]
+DEBUG:gym-duckietown:r_pos: [1.68737434 0.         2.24532283]
+DEBUG:gym-duckietown:f_pos: [1.77210559 0.         2.37187663]
+DEBUG:gym-duckietown:[1.87664335 0.         1.66488457] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0bf45ac0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.87302427 0.         1.76231738]
+DEBUG:gym-duckietown:l_pos: [1.86940519 0.         1.85975019]
+DEBUG:gym-duckietown:r_pos: [1.87664335 0.         1.66488457]
+DEBUG:gym-duckietown:f_pos: [1.7561049  0.         1.75797448]
+DEBUG:gym-duckietown:[1.73649842 0.         2.14338701] corresponds to tile at (2, 3) which is not drivable: {'coords': (2, 3), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2ae4f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.8173997  0.         2.08896979]
+DEBUG:gym-duckietown:l_pos: [1.73649842 0.         2.14338701]
+DEBUG:gym-duckietown:r_pos: [1.89830097 0.         2.03455257]
+DEBUG:gym-duckietown:f_pos: [1.75209904 0.         1.99188826]
+INFO:gym-duckietown:Starting at [2.32562783 0.         2.31684936] 3.19916706630221
+---------------------------------------------------------------------------------
+DEBUG:gym-duckietown:[1.74905736 0.         2.32059712] corresponds to tile at (2, 3) which is not drivable: {'coords': (2, 3), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2ae4f0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.0
+DEBUG:gym-duckietown:pos: [1.83905716 0.         2.32078462]
+DEBUG:gym-duckietown:l_pos: [1.83890091 0.         2.39578446]
+DEBUG:gym-duckietown:r_pos: [1.83921341 0.         2.24578478]
+DEBUG:gym-duckietown:f_pos: [1.74905736 0.         2.32059712]
+INFO:gym-duckietown:Random map chosen: map2
+DEBUG:gym-duckietown:loading map file "/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/maps/map2.yaml"
+INFO:gym-duckietown:done
+---------------------------------------------------------------------------------
+DEBUG:gym-duckietown:[2.99239504 0.         2.7361782 ] corresponds to tile at (5, 4) which is not drivable: {'coords': (5, 4), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2ae1c0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.89491365 0.         2.73808298]
+DEBUG:gym-duckietown:l_pos: [2.79743226 0.         2.73998777]
+DEBUG:gym-duckietown:r_pos: [2.99239504 0.         2.7361782 ]
+DEBUG:gym-duckietown:f_pos: [2.89262791 0.         2.62110531]
+DEBUG:gym-duckietown:[2.99219475 0.         2.71939587] corresponds to tile at (5, 4) which is not drivable: {'coords': (5, 4), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2ae1c0>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.89870109 0.         2.69173386]
+DEBUG:gym-duckietown:l_pos: [2.99219475 0.         2.71939587]
+DEBUG:gym-duckietown:r_pos: [2.80520744 0.         2.66407185]
+DEBUG:gym-duckietown:f_pos: [2.86550668 0.         2.80392625]
+INFO:gym-duckietown:Starting at [2.51038386 0.         2.68163031] 5.6738505200715394
+---------------------------------------------------------------------------------
+DEBUG:gym-duckietown:[2.93023081 0.         2.9701634 ] corresponds to tile at (5, 5) which is not drivable: {'coords': (5, 5), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2ae670>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.0
+DEBUG:gym-duckietown:pos: [2.85513232 0.         2.92056284]
+DEBUG:gym-duckietown:l_pos: [2.89646612 0.         2.85798076]
+DEBUG:gym-duckietown:r_pos: [2.81379851 0.         2.98314492]
+DEBUG:gym-duckietown:f_pos: [2.93023081 0.         2.9701634 ]
+INFO:gym-duckietown:Random map chosen: map2
+DEBUG:gym-duckietown:loading map file "/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/maps/map2.yaml"
+INFO:gym-duckietown:done
+INFO:gym-duckietown:Starting at [0.80468691 0.         3.01633822] 4.859395739847806
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+DEBUG:gym-duckietown:No tile found at [0.89106369 0.         3.51297679] (1, 6)
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.0
+DEBUG:gym-duckietown:pos: [0.87640635 0.         3.42417835]
+DEBUG:gym-duckietown:l_pos: [0.95040505 0.         3.4119639 ]
+DEBUG:gym-duckietown:r_pos: [0.80240765 0.         3.43639279]
+DEBUG:gym-duckietown:f_pos: [0.89106369 0.         3.51297679]
+INFO:gym-duckietown:Random map chosen: map2
+DEBUG:gym-duckietown:loading map file "/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/maps/map2.yaml"
+INFO:gym-duckietown:done
+DEBUG:gym-duckietown:[2.25941137 0.         1.44380989] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1850>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.35582759 0.         1.42931287]
+DEBUG:gym-duckietown:l_pos: [2.25941137 0.         1.44380989]
+DEBUG:gym-duckietown:r_pos: [2.4522438  0.         1.41481586]
+DEBUG:gym-duckietown:f_pos: [2.33843117 0.         1.31361341]
+DEBUG:gym-duckietown:[2.97937902 0.         1.52389909] corresponds to tile at (5, 2) which is not drivable: {'coords': (5, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.87674092 0.         1.5800633 ]
+DEBUG:gym-duckietown:l_pos: [2.8299374  0.         1.49453154]
+DEBUG:gym-duckietown:r_pos: [2.92354443 0.         1.66559506]
+DEBUG:gym-duckietown:f_pos: [2.97937902 0.         1.52389909]
+DEBUG:gym-duckietown:[2.32965556 0.         1.41187615] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1850>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.40777416 0.         1.47021768]
+DEBUG:gym-duckietown:l_pos: [2.32965556 0.         1.41187615]
+DEBUG:gym-duckietown:r_pos: [2.48589276 0.         1.52855922]
+DEBUG:gym-duckietown:f_pos: [2.47778401 0.         1.37647537]
+DEBUG:gym-duckietown:[2.28069089 0.         1.3917461 ] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1850>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.36910412 0.         1.43284782]
+DEBUG:gym-duckietown:l_pos: [2.45751734 0.         1.47394954]
+DEBUG:gym-duckietown:r_pos: [2.28069089 0.         1.3917461 ]
+DEBUG:gym-duckietown:f_pos: [2.31978205 0.         1.53894369]
+DEBUG:gym-duckietown:[2.97311777 0.         1.38484086] corresponds to tile at (5, 2) which is not drivable: {'coords': (5, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.89953345 0.         1.44880645]
+DEBUG:gym-duckietown:l_pos: [2.97311777 0.         1.38484086]
+DEBUG:gym-duckietown:r_pos: [2.82594912 0.         1.51277204]
+DEBUG:gym-duckietown:f_pos: [2.97629216 0.         1.53710764]
+DEBUG:gym-duckietown:[2.33801291 0.         1.19810951] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1850>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.4265495  0.         1.15727421]
+DEBUG:gym-duckietown:l_pos: [2.51508609 0.         1.1164389 ]
+DEBUG:gym-duckietown:r_pos: [2.33801291 0.         1.19810951]
+DEBUG:gym-duckietown:f_pos: [2.47555187 0.         1.26351812]
+DEBUG:gym-duckietown:[2.27953846 0.         1.24396919] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1850>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.39636061 0.         1.23752055]
+DEBUG:gym-duckietown:l_pos: [2.40173448 0.         1.33487234]
+DEBUG:gym-duckietown:r_pos: [2.39098675 0.         1.14016876]
+DEBUG:gym-duckietown:f_pos: [2.27953846 0.         1.24396919]
+DEBUG:gym-duckietown:[2.95862603 0.         1.38118257] corresponds to tile at (5, 2) which is not drivable: {'coords': (5, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.8616262 0.        1.3910458]
+DEBUG:gym-duckietown:l_pos: [2.95862603 0.         1.38118257]
+DEBUG:gym-duckietown:r_pos: [2.76462637 0.         1.40090903]
+DEBUG:gym-duckietown:f_pos: [2.87346207 0.         1.50744559]
+DEBUG:gym-duckietown:[2.30832158 0.         1.27015072] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1850>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.36601568 0.         1.34874869]
+DEBUG:gym-duckietown:l_pos: [2.30832158 0.         1.27015072]
+DEBUG:gym-duckietown:r_pos: [2.42370977 0.         1.42734666]
+DEBUG:gym-duckietown:f_pos: [2.46033324 0.         1.27951577]
+DEBUG:gym-duckietown:[2.95937408 0.         1.66983616] corresponds to tile at (5, 2) which is not drivable: {'coords': (5, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.89848103 0.         1.74598264]
+DEBUG:gym-duckietown:l_pos: [2.83758797 0.         1.82212912]
+DEBUG:gym-duckietown:r_pos: [2.95937408 0.         1.66983616]
+DEBUG:gym-duckietown:f_pos: [2.80710525 0.         1.67291098]
+DEBUG:gym-duckietown:[2.94552051 0.         1.61289966] corresponds to tile at (5, 2) which is not drivable: {'coords': (5, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.91417791 0.         1.70522458]
+DEBUG:gym-duckietown:l_pos: [2.88283531 0.         1.7975495 ]
+DEBUG:gym-duckietown:r_pos: [2.94552051 0.         1.61289966]
+DEBUG:gym-duckietown:f_pos: [2.80338801 0.         1.66761346]
+DEBUG:gym-duckietown:[2.92571103 0.         1.28784547] corresponds to tile at (5, 2) which is not drivable: {'coords': (5, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.85286887 0.         1.22303599]
+DEBUG:gym-duckietown:l_pos: [2.78002671 0.         1.1582265 ]
+DEBUG:gym-duckietown:r_pos: [2.92571103 0.         1.28784547]
+DEBUG:gym-duckietown:f_pos: [2.93064025 0.         1.13562539]
+DEBUG:gym-duckietown:[2.96613258 0.         1.22756046] corresponds to tile at (5, 2) which is not drivable: {'coords': (5, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.90581197 0.         1.30416121]
+DEBUG:gym-duckietown:l_pos: [2.96613258 0.         1.22756046]
+DEBUG:gym-duckietown:r_pos: [2.84549137 0.         1.38076196]
+DEBUG:gym-duckietown:f_pos: [2.99773287 0.         1.37654594]
+DEBUG:gym-duckietown:[2.27722259 0.         1.37639947] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1850>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.39415084 0.         1.37230243]
+DEBUG:gym-duckietown:l_pos: [2.39756504 0.         1.46974263]
+DEBUG:gym-duckietown:r_pos: [2.39073664 0.         1.27486222]
+DEBUG:gym-duckietown:f_pos: [2.27722259 0.         1.37639947]
+DEBUG:gym-duckietown:[2.9687472  0.         1.42869028] corresponds to tile at (5, 2) which is not drivable: {'coords': (5, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.87657679 0.         1.39689615]
+DEBUG:gym-duckietown:l_pos: [2.78440639 0.         1.36510202]
+DEBUG:gym-duckietown:r_pos: [2.9687472  0.         1.42869028]
+DEBUG:gym-duckietown:f_pos: [2.91472974 0.         1.28629167]
+DEBUG:gym-duckietown:[2.26544513 0.         1.28689221] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1850>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.34529148 0.         1.34284586]
+DEBUG:gym-duckietown:l_pos: [2.26544513 0.         1.28689221]
+DEBUG:gym-duckietown:r_pos: [2.42513782 0.         1.39879951]
+DEBUG:gym-duckietown:f_pos: [2.41243586 0.         1.24703024]
+DEBUG:gym-duckietown:[2.29648189 0.         1.28023403] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1850>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.36242444 0.         1.35205206]
+DEBUG:gym-duckietown:l_pos: [2.42836699 0.         1.4238701 ]
+DEBUG:gym-duckietown:r_pos: [2.29648189 0.         1.28023403]
+DEBUG:gym-duckietown:f_pos: [2.2762428  0.         1.43118312]
+DEBUG:gym-duckietown:[2.96410061 0.         1.443427  ] corresponds to tile at (5, 2) which is not drivable: {'coords': (5, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.86999093 0.         1.4689146 ]
+DEBUG:gym-duckietown:l_pos: [2.77588125 0.         1.4944022 ]
+DEBUG:gym-duckietown:r_pos: [2.96410061 0.         1.443427  ]
+DEBUG:gym-duckietown:f_pos: [2.83940581 0.         1.35598298]
+DEBUG:gym-duckietown:[2.96082356 0.         1.26043689] corresponds to tile at (5, 2) which is not drivable: {'coords': (5, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1100>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+INFO:gym-duckietown:Starting at [2.70431914 0.         1.74028273] 4.758478263109835
+DEBUG:gym-duckietown:No tile found at [2.55805636 0.         3.51267325] (4, 6)
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.0
+DEBUG:gym-duckietown:pos: [2.57072831 0.         3.42356981]
+DEBUG:gym-duckietown:l_pos: [2.64498117 0.         3.43412977]
+DEBUG:gym-duckietown:r_pos: [2.49647545 0.         3.41300986]
+DEBUG:gym-duckietown:f_pos: [2.55805636 0.         3.51267325]
+INFO:gym-duckietown:Random map chosen: map1
+DEBUG:gym-duckietown:loading map file "/home/mate/anaconda3/envs/test2/lib/python3.8/site-packages/duckietown_world/data/gd1/maps/map1.yaml"
+INFO:gym-duckietown:done
+DEBUG:gym-duckietown:[2.23488534 0.         0.58093858] corresponds to tile at (3, 0) which is not drivable: {'coords': (3, 0), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2a1f10>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [2.20558999 0.         0.67393338]
+DEBUG:gym-duckietown:l_pos: [2.23488534 0.         0.58093858]
+DEBUG:gym-duckietown:r_pos: [2.17629464 0.         0.76692817]
+DEBUG:gym-duckietown:f_pos: [2.31718375 0.         0.7090878 ]
+DEBUG:gym-duckietown:[1.78273843 0.         1.19029655] corresponds to tile at (3, 2) which is not drivable: {'coords': (3, 2), 'kind': 'grass', 'angle': 1, 'drivable': False, 'texture': <gym_duckietown.graphics.Texture object at 0x7f2b0a2ae430>, 'color': array([1, 1, 1, 1])}
+DEBUG:gym-duckietown:Invalid pose. Collision free: True On drivable area: False
+DEBUG:gym-duckietown:safety_factor: 1.3
+DEBUG:gym-duckietown:pos: [1.80865673 0.         1.09630458]
+DEBUG:gym-duckietown:l_pos: [1.78273843 0.         1.19029655]
+DEBUG:gym-duckietown:r_pos: [1.83457503 0.         1.0023126 ]
+DEBUG:gym-duckietown:f_pos: [1.69586636 0.         1.06520261]
+INFO:gym-duckietown:Starting at [2.06755513 0.         0.90687968] 0.021778218338517272
+DEBUG:gym-duckietown:f_pos: [2.83498245 0.         1.6191571 ]
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+DEBUG:gym-duckietown:f_pos: [2.83498245 0.         1.6191571 ]
+---------------------------------------------------------------------------------
+DEBUG:gym-duckietown:f_pos: [2.83498245 0.         1.6191571 ]
+DEBUG:gym-duckietown:f_pos: [2.83498245 0.         1.6191571 ]
+Done @ 0
+DEBUG:gym-duckietown:f_pos: [2.83498245 0.         1.6191571 ]
+Done @ 501
+Replay buffer length is  501
+Total T: 501 Episode Num: 1 Episode T: 501 Reward: -60.122413
+DEBUG:gym-duckietown:f_pos: [2.83498245 0.         1.6191571 ]

@@ -1,0 +1,128 @@
+tiles:
+- [floor,         floor,         floor,         floor,         floor]
+- [floor,         curve_right/N, straight/W,    curve_left/N,  floor]
+- [floor,         straight/N,    grass,         straight/N,    floor]
+- [floor,         curve_right/W, straight/W,    3way_left/N,   floor]
+- [floor,         grass,         grass,         straight/N,    floor]
+- [floor,         grass,         curve_right/N, curve_left/E,  floor]
+- [floor,         curve_right/N, curve_left/E,  asphalt,       floor]
+- [floor,         straight/N,    grass,         asphalt,       floor]
+- [floor,         3way_right/N,  straight/W,    curve_left/N,  floor]
+- [floor,         straight/N,    grass,         straight/N,    floor]
+- [floor,         curve_right/W, straight/W,    curve_left/E,  floor]
+- [floor,         floor,         floor,         floor,         floor]
+
+
+objects:
+
+- kind: sign_stop
+  pos: [2.95, 2.95]
+  rotate: 270
+  height: 0.18
+
+- kind: sign_right_T_intersect
+  pos: [2.95, 4.05]
+  rotate: 90
+  height: 0.18
+
+- kind: sign_left_T_intersect
+  pos: [4.05, 2.95]
+  rotate: 270
+  height: 0.18
+
+- kind: sign_stop
+  pos: [4.05, 2.85]
+  rotate: 180
+  height: 0.18
+
+- kind: sign_stop
+  pos: [4.05, 4.05]
+  rotate: 90
+  height: 0.18
+
+- kind: sign_T_intersect
+  pos: [4.05, 4.15]
+  rotate: 180
+  height: 0.18
+
+- kind: sign_right_T_intersect
+  pos: [2.05, 7.95]
+  rotate: 270
+  height: 0.18
+
+- kind: sign_stop
+  pos: [2.05, 9.05]
+  rotate: 90
+  height: 0.18
+
+- kind: sign_left_T_intersect
+  pos: [0.95, 9.05]
+  rotate: 90
+  height: 0.18
+
+- kind: sign_stop
+  pos: [0.95, 9.15]
+  rotate: 0
+  height: 0.18
+
+- kind: sign_stop
+  pos: [0.95, 7.95]
+  rotate: 270
+  height: 0.18
+
+- kind: sign_T_intersect
+  pos: [0.95, 7.85]
+  rotate: 0
+  height: 0.18
+
+- kind: house
+  pos: [0.84, 5.21]
+  rotate: 90
+  height: 0.5
+
+- kind: sign_do_not_enter
+  pos: [0.93, 0.31]
+  rotate: 56.92
+  height: 0.18
+
+- kind: barrier
+  pos: [0.67, 7.38]
+  rotate: 207.18
+  height: 0.08
+
+- kind: truck
+  pos: [4.22, 5.83]
+  rotate: 185.35
+  height: 0.2
+
+- kind: duckiebot
+  pos: [4.43, 9.01]
+  rotate: 275.1
+  height: 0.1
+
+- kind: building
+  pos: [1.55, 0.12]
+  rotate: 180
+  height: 0.6
+
+- kind: sign_yield
+  pos: [0.56, 3.6]
+  rotate: 56.0
+  height: 0.18
+
+- kind: sign_t_light_ahead
+  pos: [2, 3]
+  rotate: 270.0
+  height: 0.18
+
+- kind: sign_t_light_ahead
+  pos: [1.0, 3.0]
+  rotate: 90.0
+  height: 0.18
+
+- kind: duckie
+  pos: [4.61, 9.62]
+  rotate: 77.86
+  height: 0.0397
+
+tile_size: 0.700

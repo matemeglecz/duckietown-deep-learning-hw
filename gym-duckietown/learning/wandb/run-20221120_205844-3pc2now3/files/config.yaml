@@ -1,0 +1,72 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.13.5
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.8.15
+    start_time: 1668974324.949428
+    t:
+      1:
+      - 1
+      - 55
+      2:
+      - 1
+      - 55
+      3:
+      - 13
+      - 16
+      - 23
+      - 35
+      4: 3.8.15
+      5: 0.13.5
+      8:
+      - 5
+batch_size:
+  desc: null
+  value: 32
+discount:
+  desc: null
+  value: 0.99
+env_timesteps:
+  desc: null
+  value: 500
+eval_freq:
+  desc: null
+  value: 5000.0
+expl_noise:
+  desc: null
+  value: 0.1
+log_file:
+  desc: null
+  value: null
+max_timesteps:
+  desc: null
+  value: 2500000.0
+noise_clip:
+  desc: null
+  value: 0.5
+policy_freq:
+  desc: null
+  value: 2
+policy_noise:
+  desc: null
+  value: 0.2
+replay_buffer_max_size:
+  desc: null
+  value: 10000
+save_models:
+  desc: null
+  value: true
+seed:
+  desc: null
+  value: 123
+start_timesteps:
+  desc: null
+  value: 10000.0
+tau:
+  desc: null
+  value: 0.005

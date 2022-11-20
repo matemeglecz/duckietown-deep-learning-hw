@@ -1,0 +1,62 @@
+tiles:
+- [floor,         floor,         floor,         floor,         floor]
+- [floor,         curve_right/N, straight/W,    curve_left/N,  floor]
+- [floor,         straight/N,    grass,         straight/N,    floor]
+- [floor,         straight/N,    grass,         straight/N,    floor]
+- [floor,         straight/N,    grass,         straight/N,    floor]
+- [floor,         straight/N,    grass,         straight/N,    floor]
+- [floor,         straight/N,    grass,         straight/N,    floor]
+- [floor,         curve_right/W, straight/W,    curve_left/E,  floor]
+- [floor,         asphalt,       asphalt,       asphalt,       floor]
+- [floor,         floor,         floor,         floor,         floor]
+
+
+objects:
+
+- kind: sign_t_light_ahead
+  pos: [0.26, 9.44]
+  rotate: 238.19
+  height: 0.18
+
+- kind: truck
+  pos: [3.95, 0.07]
+  rotate: 83.06
+  height: 0.2
+
+- kind: truck
+  pos: [2.95, 0.13]
+  rotate: 331.29
+  height: 0.2
+
+- kind: truck
+  pos: [4.76, 1.26]
+  rotate: 270.74
+  height: 0.2
+
+- kind: cone
+  pos: [0.9, 5.98]
+  rotate: 78.26
+  height: 0.08
+
+- kind: sign_t_light_ahead
+  pos: [1, 4.55]
+  rotate: 90
+  height: 0.18
+
+- kind: sign_t_light_ahead
+  pos: [2, 4.55]
+  rotate: 270
+  height: 0.18
+
+- kind: duckie
+  pos: [2.96, 4.85]
+  rotate: 264.61
+  height: 0.0317
+
+- kind: duckie
+  pos: [0.01, 3.75]
+  rotate: 89.96
+  height: 0.0418
+
+tile_size: 0.375
+tile_size: 0.475

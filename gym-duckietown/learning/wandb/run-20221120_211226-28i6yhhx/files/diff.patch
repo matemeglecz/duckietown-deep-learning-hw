@@ -1,0 +1,2362 @@
+diff --git a/learning/__init__.py b/learning/__init__.py
+index e69de29..9fd0f8d 100644
+--- a/learning/__init__.py
++++ b/learning/__init__.py
+@@ -0,0 +1 @@
++__version__ = "1.0.10"
+diff --git a/learning/imitation/basic/__init__.py b/learning/imitation/basic/__init__.py
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/learning/imitation/basic/enjoy_imitation.py b/learning/imitation/basic/enjoy_imitation.py
+deleted file mode 100755
+index 9df75bb..0000000
+--- a/learning/imitation/basic/enjoy_imitation.py
++++ /dev/null
+@@ -1,67 +0,0 @@
+-#!/usr/bin/env python3
+-
+-"""
+-Control the simulator or Duckiebot using a model trained with imitation
+-learning, and visualize the result.
+-"""
+-
+-import time
+-import sys
+-import argparse
+-import math
+-
+-import torch
+-
+-import numpy as np
+-import gym
+-
+-from utils.env import launch_env
+-from utils.wrappers import NormalizeWrapper, ImgWrapper, DtRewardWrapper, ActionWrapper, ResizeWrapper
+-from utils.teacher import PurePursuitExpert
+-
+-from imitation.pytorch.model import Model
+-
+-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+-
+-
+-def _enjoy():
+-    model = Model(action_dim=2, max_action=1.0)
+-
+-    try:
+-        state_dict = torch.load("trained_models/imitate.pt", map_location=device)
+-        model.load_state_dict(state_dict)
+-    except:
+-        print("failed to load model")
+-        exit()
+-
+-    model.eval().to(device)
+-
+-    env = launch_env()
+-    env = ResizeWrapper(env)
+-    env = NormalizeWrapper(env)
+-    env = ImgWrapper(env)
+-    env = ActionWrapper(env)
+-    env = DtRewardWrapper(env)
+-
+-    obs = env.reset()
+-
+-    while True:
+-        obs = torch.from_numpy(obs).float().to(device).unsqueeze(0)
+-
+-        action = model(obs)
+-        action = action.squeeze().data.cpu().numpy()
+-
+-        obs, reward, done, info = env.step(action)
+-        env.render()
+-
+-        if done:
+-            if reward < 0:
+-                print("*** FAILED ***")
+-                time.sleep(0.7)
+-
+-            obs = env.reset()
+-            env.render()
+-
+-
+-if __name__ == "__main__":
+-    _enjoy()
+diff --git a/learning/imitation/basic/model.py b/learning/imitation/basic/model.py
+deleted file mode 100644
+index f48a516..0000000
+--- a/learning/imitation/basic/model.py
++++ /dev/null
+@@ -1,49 +0,0 @@
+-import torch
+-import torch.nn as nn
+-import torch.nn.functional as F
+-from torch.autograd import Variable
+-
+-
+-class Model(nn.Module):
+-    def __init__(self, action_dim, max_action):
+-        super(Model, self).__init__()
+-
+-        # ONLY TRU IN CASE OF DUCKIETOWN:
+-        flat_size = 32 * 9 * 14
+-
+-        self.lr = nn.LeakyReLU()
+-        self.tanh = nn.Tanh()
+-        self.sigm = nn.Sigmoid()
+-
+-        self.conv1 = nn.Conv2d(3, 32, 8, stride=2)
+-        self.conv2 = nn.Conv2d(32, 32, 4, stride=2)
+-        self.conv3 = nn.Conv2d(32, 32, 4, stride=2)
+-        self.conv4 = nn.Conv2d(32, 32, 4, stride=1)
+-
+-        self.bn1 = nn.BatchNorm2d(32)
+-        self.bn2 = nn.BatchNorm2d(32)
+-        self.bn3 = nn.BatchNorm2d(32)
+-        self.bn4 = nn.BatchNorm2d(32)
+-
+-        self.dropout = nn.Dropout(0.5)
+-
+-        self.lin1 = nn.Linear(flat_size, 512)
+-        self.lin2 = nn.Linear(512, action_dim)
+-
+-        self.max_action = max_action
+-
+-    def forward(self, x):
+-        x = self.bn1(self.lr(self.conv1(x)))
+-        x = self.bn2(self.lr(self.conv2(x)))
+-        x = self.bn3(self.lr(self.conv3(x)))
+-        x = self.bn4(self.lr(self.conv4(x)))
+-        x = x.view(x.size(0), -1)  # flatten
+-        x = self.dropout(x)
+-        x = self.lr(self.lin1(x))
+-
+-        # because we don't want our duckie to go backwards
+-        x = self.lin2(x)
+-        x[:, 0] = self.max_action * self.sigm(x[:, 0])  # because we don't want the duckie to go backwards
+-        x[:, 1] = self.tanh(x[:, 1])
+-
+-        return x
+diff --git a/learning/imitation/basic/train_imitation.py b/learning/imitation/basic/train_imitation.py
+deleted file mode 100755
+index c46aa00..0000000
+--- a/learning/imitation/basic/train_imitation.py
++++ /dev/null
+@@ -1,103 +0,0 @@
+-#!/usr/bin/env python3
+-
+-"""
+-This script will train a CNN model using imitation learning from a PurePursuit Expert.
+-"""
+-
+-import time
+-import random
+-import argparse
+-import math
+-import json
+-from functools import reduce
+-import operator
+-
+-import numpy as np
+-import torch
+-import torch.optim as optim
+-
+-from utils.env import launch_env
+-from utils.wrappers import NormalizeWrapper, ImgWrapper, DtRewardWrapper, ActionWrapper, ResizeWrapper
+-from utils.teacher import PurePursuitExpert
+-
+-from imitation.pytorch.model import Model
+-
+-
+-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+-
+-
+-def _train(args):
+-    env = launch_env()
+-    env = ResizeWrapper(env)
+-    env = NormalizeWrapper(env)
+-    env = ImgWrapper(env)
+-    env = ActionWrapper(env)
+-    env = DtRewardWrapper(env)
+-    print("Initialized Wrappers")
+-
+-    observation_shape = (None,) + env.observation_space.shape
+-    action_shape = (None,) + env.action_space.shape
+-
+-    # Create an imperfect demonstrator
+-    expert = PurePursuitExpert(env=env)
+-
+-    observations = []
+-    actions = []
+-
+-    # let's collect our samples
+-    for episode in range(0, args.episodes):
+-        print("Starting episode", episode)
+-        for steps in range(0, args.steps):
+-            # use our 'expert' to predict the next action.
+-            action = expert.predict(None)
+-            observation, reward, done, info = env.step(action)
+-            observations.append(observation)
+-            actions.append(action)
+-        env.reset()
+-    env.close()
+-
+-    actions = np.array(actions)
+-    observations = np.array(observations)
+-
+-    model = Model(action_dim=2, max_action=1.0)
+-    model.train().to(device)
+-
+-    # weight_decay is L2 regularization, helps avoid overfitting
+-    optimizer = optim.SGD(model.parameters(), lr=0.0004, weight_decay=1e-3)
+-
+-    avg_loss = 0
+-    for epoch in range(args.epochs):
+-        optimizer.zero_grad()
+-
+-        batch_indices = np.random.randint(0, observations.shape[0], (args.batch_size))
+-        obs_batch = torch.from_numpy(observations[batch_indices]).float().to(device)
+-        act_batch = torch.from_numpy(actions[batch_indices]).float().to(device)
+-
+-        model_actions = model(obs_batch)
+-
+-        loss = (model_actions - act_batch).norm(2).mean()
+-        loss.backward()
+-        optimizer.step()
+-
+-        loss = loss.data[0]
+-        avg_loss = avg_loss * 0.995 + loss * 0.005
+-
+-        print("epoch %d, loss=%.3f" % (epoch, avg_loss))
+-
+-        # Periodically save the trained model
+-        if epoch % 200 == 0:
+-            torch.save(model.state_dict(), "imitation/pytorch/models/imitate.pt")
+-
+-
+-if __name__ == "__main__":
+-    parser = argparse.ArgumentParser()
+-    parser.add_argument("--seed", default=1234, type=int, help="Sets Gym, TF, and Numpy seeds")
+-    parser.add_argument("--episodes", default=3, type=int, help="Number of epsiodes for experts")
+-    parser.add_argument("--steps", default=50, type=int, help="Number of steps per episode")
+-    parser.add_argument("--batch-size", default=32, type=int, help="Training batch size")
+-    parser.add_argument("--epochs", default=1, type=int, help="Number of training epochs")
+-    parser.add_argument("--model-directory", default="models/", type=str, help="Where to save models")
+-
+-    args = parser.parse_args()
+-
+-    _train(args)
+diff --git a/learning/imitation/iil-dagger/README.md b/learning/imitation/iil-dagger/README.md
+deleted file mode 100644
+index ccbffda..0000000
+--- a/learning/imitation/iil-dagger/README.md
++++ /dev/null
+@@ -1,39 +0,0 @@
+-# Imitation Learning using Dataset Aggregation
+-
+-## Introduction
+-In this baseline we train a small squeezenet model on expert trajectories to simply clone the behaviour of the expert.
+-Using only the expert trajectories would result in a model unable to recover from non-optimal positions ,Hence we use a technique called DAgger a dataset aggregation technique with mixed policies between expert and model.
+-This technique of random mixing would help the model learn a more general trajectory than the optimal one provided by the expert alone.
+-
+-## Quickstart
+-1) Clone this [repo](https://github.com/duckietown/gym-duckietown):
+-
+-    $ git clone https://github.com/duckietown/gym-duckietown.git
+-
+-2) Change into the directory:
+-
+-    $ cd gym-duckietown
+-
+-3) Install the package:
+-
+-    $ pip3 install -e .
+-
+-4) Start training:
+-
+-    $ python -m learning.imitation.iil-dagger.train
+-
+-5) Test the trained agent specifying the saved model:
+-
+-    $ python -m learning.imitation.pytorch-v2.test --model-path ![path]
+-
+-
+-## Acknowledgement
+-- We started from previous work done by Manfred Díaz as a boilerplate and we would like to thank him for his full support with code and answering our questions
+-
+-## Authors
+-- [Mostafa ElAraby ](https://www.mostafaelaraby.com/)
+-	- [Linkedin](https://linkedin.com/in/mostafaelaraby)
+--  Ramon Emiliani
+-	- [Linkedin](https://www.linkedin.com/in/ramonemiliani)
+-## References
+-- Implementation idea and code skeleton based on Diaz Cabrera, Manfred Ramon (2018)Interactive and Uncertainty-aware Imitation Learning: Theory and Applications. Masters thesis, Concordia University.
+diff --git a/learning/imitation/iil-dagger/__init__.py b/learning/imitation/iil-dagger/__init__.py
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/learning/imitation/iil-dagger/algorithms/__init__.py b/learning/imitation/iil-dagger/algorithms/__init__.py
+deleted file mode 100644
+index f708705..0000000
+--- a/learning/imitation/iil-dagger/algorithms/__init__.py
++++ /dev/null
+@@ -1 +0,0 @@
+-from .dagger import DAgger
+diff --git a/learning/imitation/iil-dagger/algorithms/dagger.py b/learning/imitation/iil-dagger/algorithms/dagger.py
+deleted file mode 100644
+index 7504801..0000000
+--- a/learning/imitation/iil-dagger/algorithms/dagger.py
++++ /dev/null
+@@ -1,56 +0,0 @@
+-import math
+-from .iil_learning import InteractiveImitationLearning
+-import numpy as np
+-
+-
+-class DAgger(InteractiveImitationLearning):
+-    """
+-    DAgger algorithm to mix policies between learner and expert
+-    Ross, Stéphane, Geoffrey Gordon, and Drew Bagnell. "A reduction of imitation learning and structured prediction to no-regret online learning." Proceedings of the fourteenth international conference on artificial intelligence and statistics. 2011.
+-    ...
+-    Methods
+-    -------
+-    _mix
+-        used to return a policy teacher / expert based on random choice and safety checks
+-    """
+-
+-    def __init__(self, env, teacher, learner, horizon, episodes, alpha=0.5, test=False):
+-        InteractiveImitationLearning.__init__(self, env, teacher, learner, horizon, episodes, test)
+-        # expert decay
+-        self.p = alpha
+-        self.alpha = self.p
+-
+-        # thresholds used to give control back to learner once the teacher converges
+-        self.convergence_distance = 0.05
+-        self.convergence_angle = np.pi / 18
+-
+-        # threshold on angle and distance from the lane when using the model to avoid going off track and env reset within an episode
+-        self.angle_limit = np.pi / 8
+-        self.distance_limit = 0.12
+-
+-    def _mix(self):
+-        control_policy = np.random.choice(a=[self.teacher, self.learner], p=[self.alpha, 1.0 - self.alpha])
+-        if self._found_obstacle:
+-            return self.teacher
+-        try:
+-            lp = self.environment.get_lane_pos2(self.environment.cur_pos, self.environment.cur_angle)
+-        except:
+-            return control_policy
+-        if self.active_policy:
+-            # keep using tecaher untill duckiebot converges back on track
+-            if not (abs(lp.dist) < self.convergence_distance and abs(lp.angle_rad) < self.convergence_angle):
+-                return self.teacher
+-        else:
+-            # in case we are using our learner and it started to diverge a lot we need to give
+-            # control back to the expert
+-            if abs(lp.dist) > self.distance_limit or abs(lp.angle_rad) > self.angle_limit:
+-                return self.teacher
+-        return control_policy
+-
+-    def _on_episode_done(self):
+-        self.alpha = self.p ** self._episode
+-        # Clear experience
+-        self._observations = []
+-        self._expert_actions = []
+-
+-        InteractiveImitationLearning._on_episode_done(self)
+diff --git a/learning/imitation/iil-dagger/algorithms/iil_learning.py b/learning/imitation/iil-dagger/algorithms/iil_learning.py
+deleted file mode 100644
+index 3f6f0bd..0000000
+--- a/learning/imitation/iil-dagger/algorithms/iil_learning.py
++++ /dev/null
+@@ -1,151 +0,0 @@
+-class InteractiveImitationLearning:
+-    """
+-    A class used to contain main imitation learning algorithm
+-    ...
+-    Methods
+-    -------
+-    train(samples, debug)
+-        start training imitation learning
+-    """
+-
+-    def __init__(self, env, teacher, learner, horizon, episodes, test=False):
+-        """
+-        Parameters
+-        ----------
+-        env :
+-            duckietown environment
+-        teacher :
+-            expert used to train imitation learning
+-        learner :
+-            model used to learn
+-        horizon : int
+-            which is the number of observations to be collected during one episode
+-        episode : int
+-            number of episodes which is the number of collected trajectories
+-        """
+-
+-        self.environment = env
+-        self.teacher = teacher
+-        self.learner = learner
+-        self.test = test
+-
+-        # from IIL
+-        self._horizon = horizon
+-        self._episodes = episodes
+-
+-        # data
+-        self._observations = []
+-        self._expert_actions = []
+-
+-        # statistics
+-        self.learner_action = None
+-        self.learner_uncertainty = None
+-
+-        self.teacher_action = None
+-        self.active_policy = True  # if teacher is active
+-
+-        # internal count
+-        self._current_horizon = 0
+-        self._episode = 0
+-
+-        # event listeners
+-        self._episode_done_listeners = []
+-        self._found_obstacle = False
+-        # steering angle gain
+-        self.gain = 10
+-
+-    def train(self, debug=False):
+-        """
+-        Parameters
+-        ----------
+-        teacher :
+-            expert used to train imitation learning
+-        learner :
+-            model used to learn
+-        horizon : int
+-            which is the number of observations to be collected during one episode
+-        episode : int
+-            number of episodes which is the number of collected trajectories
+-        """
+-        self._debug = debug
+-        for episode in range(self._episodes):
+-            self._episode = episode
+-            self._sampling()
+-            self._optimize()  # episodic learning
+-            self._on_episode_done()
+-
+-    def _sampling(self):
+-        observation = self.environment.render_obs()
+-        for horizon in range(self._horizon):
+-            self._current_horizon = horizon
+-            action = self._act(observation)
+-            try:
+-                next_observation, reward, done, info = self.environment.step(
+-                    [action[0], action[1] * self.gain]
+-                )
+-            except Exception as e:
+-                print(e)
+-            if self._debug:
+-                self.environment.render()
+-            observation = next_observation
+-
+-    # execute current control policy
+-    def _act(self, observation):
+-        if self._episode <= 1:  # initial policy equals expert's
+-            control_policy = self.teacher
+-        else:
+-            control_policy = self._mix()
+-
+-        control_action = control_policy.predict(observation)
+-
+-        self._query_expert(control_policy, control_action, observation)
+-
+-        self.active_policy = control_policy == self.teacher
+-        if self.test:
+-            return self.learner_action
+-
+-        return control_action
+-
+-    def _query_expert(self, control_policy, control_action, observation):
+-        if control_policy == self.learner:
+-            self.learner_action = control_action
+-        else:
+-            self.learner_action = self.learner.predict(observation)
+-
+-        if control_policy == self.teacher:
+-            self.teacher_action = control_action
+-        else:
+-            self.teacher_action = self.teacher.predict(observation)
+-
+-        if self.teacher_action is not None:
+-            self._aggregate(observation, self.teacher_action)
+-
+-        if self.teacher_action[0] < 0.1:
+-            self._found_obstacle = True
+-        else:
+-            self._found_obstacle = False
+-
+-    def _mix(self):
+-        raise NotImplementedError()
+-
+-    def _aggregate(self, observation, action):
+-        if not (self.test):
+-            self._observations.append(observation)
+-            self._expert_actions.append(action)
+-
+-    def _optimize(self):
+-        if not (self.test):
+-            self.learner.optimize(self._observations, self._expert_actions, self._episode)
+-            print("saving model")
+-            self.learner.save()
+-
+-    # TRAINING EVENTS
+-
+-    # triggered after an episode of learning is done
+-    def on_episode_done(self, listener):
+-        self._episode_done_listeners.append(listener)
+-
+-    def _on_episode_done(self):
+-        for listener in self._episode_done_listeners:
+-            listener.episode_done(self._episode)
+-        self.environment.reset()
+diff --git a/learning/imitation/iil-dagger/learner/__init__.py b/learning/imitation/iil-dagger/learner/__init__.py
+deleted file mode 100644
+index b167dde..0000000
+--- a/learning/imitation/iil-dagger/learner/__init__.py
++++ /dev/null
+@@ -1 +0,0 @@
+-from .neural_network_policy import NeuralNetworkPolicy
+diff --git a/learning/imitation/iil-dagger/learner/neural_network_policy.py b/learning/imitation/iil-dagger/learner/neural_network_policy.py
+deleted file mode 100644
+index 9f1dabf..0000000
+--- a/learning/imitation/iil-dagger/learner/neural_network_policy.py
++++ /dev/null
+@@ -1,177 +0,0 @@
+-import numpy as np
+-from tqdm import tqdm
+-import cv2
+-import os
+-
+-import torch
+-from torch.utils.data import TensorDataset, DataLoader
+-from torchvision.transforms import ToTensor, Normalize, Compose
+-from torch.utils.tensorboard import SummaryWriter
+-
+-from PIL import Image
+-
+-
+-class NeuralNetworkPolicy:
+-    """
+-    A wrapper to train neural network model
+-    ...
+-    Methods
+-    -------
+-    optimize(observations, expert_actions, episode)
+-        train the model on the newly collected data from the simulator
+-
+-    predict(observation)
+-        takes images and predicts the action space using the model
+-
+-    save
+-        save a model checkpoint to storage location
+-    """
+-
+-    def __init__(self, model, optimizer, storage_location, dataset, **kwargs):
+-        """
+-        Parameters
+-        ----------
+-        model :
+-            input pytorch model that will be trained
+-        optimizer :
+-            torch optimizer
+-        storage_location : string
+-            path of the model to be saved , the dataset and tensorboard logs
+-        dataset :
+-            object storing observation and labels from expert
+-        """
+-        self._train_iteration = 0
+-        self._device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+-
+-        # Base parameters
+-        self.model = model.to(self._device)
+-        self.optimizer = optimizer
+-        self.storage_location = storage_location
+-        self.writer = SummaryWriter(self.storage_location)
+-
+-        # Optional parameters
+-        self.epochs = kwargs.get("epochs", 10)
+-        self.batch_size = kwargs.get("batch_size", 32)
+-        self.input_shape = kwargs.get("input_shape", (60, 80))
+-        self.max_velocity = kwargs.get("max_velocity", 0.7)
+-
+-        self.episode = 0
+-
+-        self.dataset = dataset
+-        # Load previous weights
+-        if "model_path" in kwargs:
+-            self.model.load_state_dict(torch.load(kwargs.get("model_path"), map_location=self._device))
+-            print("Loaded ")
+-
+-    def __del__(self):
+-        self.writer.close()
+-
+-    def optimize(self, observations, expert_actions, episode):
+-        """
+-        Parameters
+-        ----------
+-        observations :
+-            input images collected from the simulator
+-        expert_actions :
+-            list of actions each action [velocity, steering_angle] from expert
+-        episode : int
+-            current episode number
+-        """
+-        print("Starting episode #", str(episode))
+-        self.episode = episode
+-        self.model.episode = episode
+-        # Transform newly received data
+-        observations, expert_actions = self._transform(observations, expert_actions)
+-
+-        # Retrieve data loader
+-        dataloader = self._get_dataloader(observations, expert_actions)
+-        # Train model
+-        for epoch in tqdm(range(1, self.epochs + 1)):
+-            running_loss = 0.0
+-            self.model.epoch = 0
+-            for i, data in enumerate(dataloader, 0):
+-                # Send data to device
+-                data = [variable.to(self._device) for variable in data]
+-
+-                # zero the parameter gradients
+-                self.optimizer.zero_grad()
+-
+-                # forward + backward + optimize
+-                loss = self.model.loss(*data)
+-                loss.backward()
+-                self.optimizer.step()
+-
+-                # Statistics
+-                running_loss += loss.item()
+-
+-            # Logging
+-            self._logging(loss=running_loss, epoch=epoch)
+-
+-        # Post training routine
+-        self._on_optimization_end()
+-
+-    def predict(self, observation):
+-        """
+-        Parameters
+-        ----------
+-        observations :
+-            input image from the simulator
+-        Returns
+-        ----------
+-        prediction:
+-            action space of input observation
+-        """
+-        # Apply transformations to data
+-        observation, _ = self._transform([observation], [0])
+-        observation = torch.tensor(observation)
+-        # Predict with model
+-        prediction = self.model.predict(observation.to(self._device))
+-
+-        return prediction
+-
+-    def save(self):
+-        torch.save(self.model.state_dict(), os.path.join(self.storage_location, "model.pt"))
+-
+-    def _transform(self, observations, expert_actions):
+-        # Resize images
+-        observations = [
+-            Image.fromarray(cv2.resize(observation, dsize=self.input_shape[::-1]))
+-            for observation in observations
+-        ]
+-        # Transform to tensors
+-        compose_obs = Compose(
+-            [
+-                ToTensor(),
+-                Normalize(
+-                    (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
+-                ),  # using imagenet normalization values
+-            ]
+-        )
+-
+-        observations = [compose_obs(observation).numpy() for observation in observations]
+-        try:
+-            # scaling velocity to become in 0-1 range which is multiplied by max speed to get actual vel
+-            # also scaling steering angle to become in range -1 to 1 to make it easier to regress
+-            expert_actions = [
+-                np.array([expert_action[0], expert_action[1] / (np.pi / 2)])
+-                for expert_action in expert_actions
+-            ]
+-        except:
+-            pass
+-        expert_actions = [torch.tensor(expert_action).numpy() for expert_action in expert_actions]
+-
+-        return observations, expert_actions
+-
+-    def _get_dataloader(self, observations, expert_actions):
+-        # Include new experiences
+-        self.dataset.extend(observations, expert_actions)
+-        dataloader = DataLoader(self.dataset, batch_size=self.batch_size, shuffle=True)
+-        return dataloader
+-
+-    def _logging(self, **kwargs):
+-        epoch = kwargs.get("epoch")
+-        loss = kwargs.get("loss")
+-        self.writer.add_scalar("Loss/train/{}".format(self._train_iteration), loss, epoch)
+-
+-    def _on_optimization_end(self):
+-        self._train_iteration += 1
+diff --git a/learning/imitation/iil-dagger/model/__init__.py b/learning/imitation/iil-dagger/model/__init__.py
+deleted file mode 100644
+index 4b470f2..0000000
+--- a/learning/imitation/iil-dagger/model/__init__.py
++++ /dev/null
+@@ -1 +0,0 @@
+-from .squeezenet import Squeezenet
+diff --git a/learning/imitation/iil-dagger/model/squeezenet.py b/learning/imitation/iil-dagger/model/squeezenet.py
+deleted file mode 100644
+index 6ff957b..0000000
+--- a/learning/imitation/iil-dagger/model/squeezenet.py
++++ /dev/null
+@@ -1,135 +0,0 @@
+-import torch
+-from torch import nn
+-from torchvision import models
+-import torch.nn.functional as F
+-
+-import torch.nn.init as init
+-import numpy as np
+-
+-
+-class Squeezenet(nn.Module):
+-    """
+-    A class used to define action regressor model based on squeezenet arch.
+-    ...
+-    Methods
+-    -------
+-    forward(images)
+-        makes a model forward pass on input images
+-
+-    loss(*args)
+-        takes images and target action to compute the loss function used in optimization
+-
+-    predict(*args)
+-        takes images as input and predict the action space unnormalized
+-    """
+-
+-    def __init__(self, num_outputs=2, max_velocity=0.7, max_steering=np.pi / 2):
+-        """
+-        Parameters
+-        ----------
+-        num_outputs : int
+-            number of outputs of the action space (default 2)
+-        max_velocity : float
+-            the maximum velocity used by the teacher (default 0.7)
+-        max_steering : float
+-            maximum steering angle as we are predicting normalized [0-1] (default pi/2)
+-        """
+-        super(Squeezenet, self).__init__()
+-        self._device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+-        self.model = models.squeezenet1_1()
+-        self.num_outputs = num_outputs
+-        self.max_velocity_tensor = torch.tensor(max_velocity).to(self._device)
+-        self.max_steering = max_steering
+-
+-        # using a subset of full squeezenet for input image features
+-        self.model.features = nn.Sequential(*list(self.model.features.children())[:6])
+-        self.final_conv = nn.Conv2d(32, self.num_outputs, kernel_size=1, stride=1)
+-        self.model.classifier = nn.Sequential(
+-            nn.Dropout(p=0.15),
+-            nn.Conv2d(128, 64, kernel_size=3, stride=1),
+-            nn.ReLU(inplace=True),
+-            nn.Conv2d(64, 32, kernel_size=3, stride=1),
+-            nn.Dropout(p=0.15),
+-            self.final_conv,
+-            nn.AdaptiveAvgPool2d((1, 1)),
+-        )
+-        self.model.num_classes = self.num_outputs
+-        self._init_weights()
+-
+-    def _init_weights(self):
+-        for m in self.model.classifier.modules():
+-            if isinstance(m, nn.Conv2d):
+-                if m is self.final_conv:
+-                    init.normal_(m.weight, mean=0.0, std=0.01)
+-                else:
+-                    init.kaiming_uniform_(m.weight)
+-                if m.bias is not None:
+-                    init.constant_(m.bias, 0)
+-
+-    def forward(self, images):
+-        """
+-        Parameters
+-        ----------
+-        images : tensor
+-            batch of input images to get normalized predicted action
+-        Returns
+-        -------
+-        action: tensor
+-            normalized predicted action from the model
+-        """
+-        action = self.model(images)
+-        return action
+-
+-    def loss(self, *args):
+-        """
+-        Parameters
+-        ----------
+-        *args :
+-            takes batch of images and target action space to get the loss function.
+-        Returns
+-        -------
+-        loss: tensor
+-            loss function used by the optimizer to update the model
+-        """
+-        self.train()
+-        images, target = args
+-        prediction = self.forward(images)
+-        if self.num_outputs == 1:
+-            loss = F.mse_loss(prediction, target[:, -1].reshape(-1, 1), reduction="mean")
+-        else:
+-            loss_omega = F.mse_loss(prediction[:, 1], target[:, 1], reduction="mean")
+-            loss_v = F.mse_loss(prediction[:, 0], target[:, 0], reduction="mean")
+-            loss = 0.2 * loss_v + 0.8 * loss_omega
+-        return loss
+-
+-    def predict(self, *args):
+-        """
+-        Parameters
+-        ----------
+-        *args : tensor
+-            batch of input images to get unnormalized predicted action
+-        Returns
+-        -------
+-        action: tensor
+-            action having velocity and omega of shape (batch_size, 2)
+-        """
+-        images = args[0]
+-        output = self.model(images)
+-        if self.num_outputs == 1:
+-            omega = output
+-            v_tensor = self.max_velocity_tensor.clone()
+-        else:
+-            v_tensor = output[:, 0].unsqueeze(1)
+-            omega = output[:, 1].unsqueeze(1) * self.max_steering
+-        output = torch.cat((v_tensor, omega), 1).squeeze().detach()
+-        return output
+-
+-
+-if __name__ == "__main__":
+-    # TODO test the model input and output
+-    batch_size = 2
+-    img_size = (100, 80)
+-    model = Squeezenet()
+-    input_image = torch.rand((batch_size, 3, img_size[0], img_size[1])).to(model._device)
+-    prediction = model.predict(input_image)
+-    assert list(prediction.shape) == [batch_size, model.num_outputs]
+diff --git a/learning/imitation/iil-dagger/teacher/__init__.py b/learning/imitation/iil-dagger/teacher/__init__.py
+deleted file mode 100644
+index ff53a73..0000000
+--- a/learning/imitation/iil-dagger/teacher/__init__.py
++++ /dev/null
+@@ -1 +0,0 @@
+-from .pure_pursuit_policy import PurePursuitPolicy
+diff --git a/learning/imitation/iil-dagger/teacher/pure_pursuit_policy.py b/learning/imitation/iil-dagger/teacher/pure_pursuit_policy.py
+deleted file mode 100644
+index 4f5d56f..0000000
+--- a/learning/imitation/iil-dagger/teacher/pure_pursuit_policy.py
++++ /dev/null
+@@ -1,134 +0,0 @@
+-import math
+-import numpy as np
+-from gym_duckietown.simulator import AGENT_SAFETY_RAD
+-
+-POSITION_THRESHOLD = 0.04
+-REF_VELOCITY = 0.7
+-FOLLOWING_DISTANCE = 0.24
+-AGENT_SAFETY_GAIN = 1.15
+-
+-
+-class PurePursuitPolicy:
+-    """
+-    A Pure Pusuit controller class to act as an expert to the model
+-    ...
+-    Methods
+-    -------
+-    forward(images)
+-        makes a model forward pass on input images
+-
+-    loss(*args)
+-        takes images and target action to compute the loss function used in optimization
+-
+-    predict(observation)
+-        takes an observation image and predicts using env information the action
+-    """
+-
+-    def __init__(
+-        self, env, ref_velocity=REF_VELOCITY, following_distance=FOLLOWING_DISTANCE, max_iterations=1000
+-    ):
+-        """
+-        Parameters
+-        ----------
+-        ref_velocity : float
+-            duckiebot maximum velocity (default 0.7)
+-        following_distance : float
+-            distance used to follow the trajectory in pure pursuit (default 0.24)
+-        """
+-        self.env = env
+-        self.following_distance = following_distance
+-        self.max_iterations = max_iterations
+-        self.ref_velocity = ref_velocity
+-
+-    def predict(self, observation):
+-        """
+-        Parameters
+-        ----------
+-        observation : image
+-            image of current observation from simulator
+-        Returns
+-        -------
+-        action: list
+-            action having velocity and omega of current observation
+-        """
+-        closest_point, closest_tangent = self.env.unwrapped.closest_curve_point(
+-            self.env.cur_pos, self.env.cur_angle
+-        )
+-        if closest_point is None or closest_tangent is None:
+-            self.env.reset()
+-            closest_point, closest_tangent = self.env.unwrapped.closest_curve_point(
+-                self.env.cur_pos, self.env.cur_angle
+-            )
+-
+-        current_world_objects = self.env.objects
+-        # to slow down if there's a duckiebot in front of you
+-        # this is used to avoid hitting another moving duckiebot in the map
+-        # in case of training LFV baseline
+-        velocity_slow_down = 1
+-        for obj in current_world_objects:
+-            if not obj.static and obj.kind == "duckiebot":
+-                if True:
+-                    collision_penalty = abs(
+-                        obj.proximity(self.env.cur_pos, AGENT_SAFETY_RAD * AGENT_SAFETY_GAIN)
+-                    )
+-                    if collision_penalty > 0:
+-                        # this means we are approaching and we need to slow down
+-                        velocity_slow_down = collision_penalty
+-                        break
+-
+-        lookup_distance = self.following_distance
+-        # projected_angle used to detect corners and to reduce the velocity accordingly
+-        projected_angle, _, _ = self._get_projected_angle_difference(0.3)
+-        velocity_scale = 1
+-
+-        current_tile_pos = self.env.get_grid_coords(self.env.cur_pos)
+-        current_tile = self.env._get_tile(*current_tile_pos)
+-        if "curve" in current_tile["kind"] or abs(projected_angle) < 0.92:
+-            # slowing down by a scale of 0.5
+-            velocity_scale = 0.5
+-        _, closest_point, curve_point = self._get_projected_angle_difference(lookup_distance)
+-
+-        if closest_point is None:  # if cannot find a curve point in max iterations
+-            return [0, 0]
+-
+-        # Compute a normalized vector to the curve point
+-        point_vec = curve_point - self.env.cur_pos
+-        point_vec /= np.linalg.norm(point_vec)
+-        right_vec = np.array([math.sin(self.env.cur_angle), 0, math.cos(self.env.cur_angle)])
+-        dot = np.dot(right_vec, point_vec)
+-        omega = -1 * dot
+-        # range of dot is just -pi/2 and pi/2 and will be multiplied later by a gain adjustable if we are testing on a hardware or not
+-        velocity = self.ref_velocity * velocity_scale
+-        if velocity_slow_down < 0.2:
+-            velocity = 0
+-            omega = 0
+-
+-        action = [velocity, omega]
+-
+-        return action
+-
+-    def _get_projected_angle_difference(self, lookup_distance):
+-        # Find the projection along the path
+-        closest_point, closest_tangent = self.env.closest_curve_point(self.env.cur_pos, self.env.cur_angle)
+-
+-        iterations = 0
+-        curve_angle = None
+-
+-        while iterations < 10:
+-            # Project a point ahead along the curve tangent,
+-            # then find the closest point to to that
+-            follow_point = closest_point + closest_tangent * lookup_distance
+-            curve_point, curve_angle = self.env.closest_curve_point(follow_point, self.env.cur_angle)
+-
+-            # If we have a valid point on the curve, stop
+-            if curve_angle is not None and curve_point is not None:
+-                break
+-
+-            iterations += 1
+-            lookup_distance *= 0.5
+-
+-        if curve_angle is None:  # if cannot find a curve point in max iterations
+-            return None, None, None
+-
+-        else:
+-            return np.dot(curve_angle, closest_tangent), closest_point, curve_point
+diff --git a/learning/imitation/iil-dagger/test.py b/learning/imitation/iil-dagger/test.py
+deleted file mode 100644
+index 1c05871..0000000
+--- a/learning/imitation/iil-dagger/test.py
++++ /dev/null
+@@ -1,58 +0,0 @@
+-from .train import launch_env, teacher
+-from .learner import NeuralNetworkPolicy
+-from .model import Squeezenet
+-from .algorithms import DAgger
+-import argparse
+-import os
+-
+-
+-def process_args():
+-    parser = argparse.ArgumentParser()
+-    parser.add_argument("--episode", "-i", default=10, type=int)
+-    parser.add_argument("--horizon", "-r", default=64, type=int)
+-    parser.add_argument("--num-outputs", "-n", default=2, type=int)
+-    parser.add_argument("--model-path", "-mp", default="", type=str)
+-    parser.add_argument("--map-name", "-m", default="loop_empty", type=str)
+-    return parser
+-
+-
+-if __name__ == "__main__":
+-    parser = process_args()
+-    input_shape = (120, 160)
+-    max_velocity = 0.7
+-
+-    config = parser.parse_args()
+-    # launching environment and testing on different maps using map randomization
+-    environment = launch_env(config.map_name, randomize_maps_on_reset=True)
+-
+-    task_horizon = config.horizon
+-    task_episode = config.episode
+-
+-    if not (os.path.isfile(config.model_path)):
+-        raise Exception("Model File not found")
+-
+-    model = Squeezenet(num_outputs=config.num_outputs, max_velocity=max_velocity)
+-
+-    learner = NeuralNetworkPolicy(
+-        model=model,
+-        optimizer=None,
+-        dataset=None,
+-        storage_location="",
+-        input_shape=input_shape,
+-        max_velocity=max_velocity,
+-        model_path=config.model_path,
+-    )
+-
+-    algorithm = DAgger(
+-        env=environment,
+-        teacher=teacher(environment, max_velocity),
+-        learner=learner,
+-        horizon=task_horizon,
+-        episodes=task_episode,
+-        alpha=0,
+-        test=True,
+-    )
+-
+-    algorithm.train(debug=True)  # DEBUG to show simulation
+-
+-    environment.close()
+diff --git a/learning/imitation/iil-dagger/train.py b/learning/imitation/iil-dagger/train.py
+deleted file mode 100644
+index 4b707d7..0000000
+--- a/learning/imitation/iil-dagger/train.py
++++ /dev/null
+@@ -1,84 +0,0 @@
+-import math
+-from gym_duckietown.envs import DuckietownEnv
+-import argparse
+-
+-from .teacher import PurePursuitPolicy
+-from .learner import NeuralNetworkPolicy
+-from .model import Squeezenet
+-from .algorithms import DAgger
+-from .utils import MemoryMapDataset
+-import torch
+-import os
+-
+-
+-def launch_env(map_name, randomize_maps_on_reset=False, domain_rand=False):
+-    environment = DuckietownEnv(
+-        domain_rand=domain_rand, max_steps=math.inf, map_name=map_name, randomize_maps_on_reset=False
+-    )
+-    return environment
+-
+-
+-def teacher(env, max_velocity):
+-    return PurePursuitPolicy(env=env, ref_velocity=max_velocity)
+-
+-
+-def process_args():
+-    parser = argparse.ArgumentParser()
+-    parser.add_argument("--episode", "-i", default=10, type=int)
+-    parser.add_argument("--horizon", "-r", default=64, type=int)
+-    parser.add_argument("--learning-rate", "-l", default=2, type=int)
+-    parser.add_argument("--decay", "-d", default=2, type=int)
+-    parser.add_argument("--save-path", "-s", default="iil_baseline", type=str)
+-    parser.add_argument("--map-name", "-m", default="loop_empty", type=str)
+-    parser.add_argument("--num-outputs", "-n", default=2, type=int)
+-    return parser
+-
+-
+-if __name__ == "__main__":
+-    parser = process_args()
+-    input_shape = (120, 160)
+-    batch_size = 16
+-    epochs = 10
+-    learning_rates = [1e-1, 1e-2, 1e-3, 1e-4, 1e-5]
+-    # decays
+-    mixing_decays = [0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.95]
+-    # Max velocity
+-    max_velocity = 0.5
+-
+-    config = parser.parse_args()
+-    # check for  storage path
+-    if not (os.path.isdir(config.save_path)):
+-        os.makedirs(config.save_path)
+-    # launching environment
+-    environment = launch_env(config.map_name)
+-
+-    task_horizon = config.horizon
+-    task_episode = config.episode
+-
+-    model = Squeezenet(num_outputs=config.num_outputs, max_velocity=max_velocity)
+-    policy_optimizer = torch.optim.Adam(model.parameters(), lr=learning_rates[config.learning_rate])
+-
+-    dataset = MemoryMapDataset(25000, (3, *input_shape), (2,), config.save_path)
+-    learner = NeuralNetworkPolicy(
+-        model=model,
+-        optimizer=policy_optimizer,
+-        storage_location=config.save_path,
+-        batch_size=batch_size,
+-        epochs=epochs,
+-        input_shape=input_shape,
+-        max_velocity=max_velocity,
+-        dataset=dataset,
+-    )
+-
+-    algorithm = DAgger(
+-        env=environment,
+-        teacher=teacher(environment, max_velocity),
+-        learner=learner,
+-        horizon=task_horizon,
+-        episodes=task_episode,
+-        alpha=mixing_decays[config.decay],
+-    )
+-
+-    algorithm.train(debug=True)  # DEBUG to show simulation
+-
+-    environment.close()
+diff --git a/learning/imitation/iil-dagger/utils/__init__.py b/learning/imitation/iil-dagger/utils/__init__.py
+deleted file mode 100644
+index 9bbb325..0000000
+--- a/learning/imitation/iil-dagger/utils/__init__.py
++++ /dev/null
+@@ -1 +0,0 @@
+-from .dataset import MemoryMapDataset
+diff --git a/learning/imitation/iil-dagger/utils/dataset.py b/learning/imitation/iil-dagger/utils/dataset.py
+deleted file mode 100644
+index 901f728..0000000
+--- a/learning/imitation/iil-dagger/utils/dataset.py
++++ /dev/null
+@@ -1,104 +0,0 @@
+-import torch
+-from torch.utils.data import Dataset
+-import numpy as np
+-import os
+-from typing import Tuple, List
+-
+-
+-class MemoryMapDataset(Dataset):
+-    """Dataset to store multiple arrays on disk to avoid saturating the RAM"""
+-
+-    def __init__(self, size: int, data_size: tuple, target_size: tuple, path: str):
+-        """
+-        Parameters
+-        ----------
+-        size : int
+-            Number of arrays to store, will be the first dimension of the resulting tensor dataset.
+-        data_size : tuple
+-            Size of data, may be 3D (CxHxW) for images or 2D/1D for features.
+-        target_size : tuple
+-            Size of the target, for our case it is a 1D array having, angular and linear speed.
+-        path : str
+-            Path where the file will be saved.
+-        """
+-        self.size = size
+-        self.data_size = data_size
+-        self.target_size = target_size
+-        self.path = path
+-
+-        # Path for each array
+-        self.data_path = os.path.join(path, "data.dat")
+-        self.target_path = os.path.join(path, "target.dat")
+-
+-        # Create arrays
+-        self.data = np.memmap(self.data_path, dtype="float32", mode="w+", shape=(self.size, *self.data_size))
+-        self.target = np.memmap(
+-            self.target_path, dtype="float32", mode="w+", shape=(self.size, *self.target_size)
+-        )
+-
+-        # Initialize number of saved records to zero
+-        self.length = 0
+-
+-        # keep track of real length in case of bypassing size value
+-        self.real_length = 0
+-
+-    def __getitem__(self, item) -> Tuple[torch.Tensor, torch.Tensor]:
+-        """Get one pair of training examples from the dataset.
+-
+-        Parameters
+-        ----------
+-        item : int
+-            Index on the first dimension of the dataset.
+-
+-        Returns
+-        -------
+-        sample, target : tuple
+-            Training sample consisting of data, label of data_size and target_size, respectively.
+-        """
+-        sample = torch.tensor(self.data[item, ...])
+-        target = torch.tensor(self.target[item, ...])
+-
+-        return sample, target
+-
+-    def __len__(self) -> int:
+-        """Get size (number of saved examples) of the dataset.
+-
+-        Returns
+-        -------
+-        length : int
+-            Occupied length of the dataset. Note that it returns the number of saved examples rather than the maximum
+-            size used in the initialization.
+-        """
+-        return self.length
+-
+-    def extend(self, observations: List[np.ndarray], actions: List[np.ndarray]):
+-        """Saves observations to the dataset. Iterates through the lists containing matching pairs of observations and
+-        actions. After saving each sample the dataset size is readjusted. If the dataset exceeds its maximum size
+-        it will start overwriting the firs experiences.
+-
+-        Parameters
+-        ----------
+-        observations : List
+-            List containing np.ndarray observations of size data_size.
+-        actions
+-            List containing np.ndarray actions of size target_size.
+-        """
+-        for index, (observation, action) in enumerate(zip(observations, actions)):
+-            current_data_indx = self.real_length + index
+-            if self.real_length + index >= self.size:
+-                # it will be a circular by getting rid of old experiments
+-                current_data_indx %= self.size
+-            self.data[current_data_indx, ...] = observation.astype(np.float32)
+-            self.target[current_data_indx, ...] = action.astype(np.float32)
+-        if self.real_length >= self.size:
+-            self.length = self.size - 1
+-        else:
+-            self.length += len(observations)
+-        self.real_length += len(observations)
+-
+-    def save(self):
+-        """In case of wanting to save the dataset this method should be implemented by flushing anc closing the memory
+-        map. Note that the files (depending on the size parameter) may occupy considerable amount of memory.
+-        """
+-        # TODO
+-        pass
+diff --git a/learning/imitation/tensorflow/_layers.py b/learning/imitation/tensorflow/_layers.py
+deleted file mode 100644
+index 0c89670..0000000
+--- a/learning/imitation/tensorflow/_layers.py
++++ /dev/null
+@@ -1,63 +0,0 @@
+-import tensorflow as tf
+-
+-L2_LAMBDA = 1e-04
+-
+-
+-def _residual_block(x, size, dropout=False, dropout_prob=0.5, seed=None):
+-    residual = tf.layers.batch_normalization(x)  # TODO: check if the defaults in Tf are the same as in Keras
+-    residual = tf.nn.relu(residual)
+-    residual = tf.layers.conv2d(
+-        residual,
+-        filters=size,
+-        kernel_size=3,
+-        strides=2,
+-        padding="same",
+-        kernel_initializer=tf.keras.initializers.he_normal(seed=seed),
+-        kernel_regularizer=tf.keras.regularizers.l2(L2_LAMBDA),
+-    )
+-    if dropout:
+-        residual = tf.nn.dropout(residual, dropout_prob, seed=seed)
+-    residual = tf.layers.batch_normalization(residual)
+-    residual = tf.nn.relu(residual)
+-    residual = tf.layers.conv2d(
+-        residual,
+-        filters=size,
+-        kernel_size=3,
+-        padding="same",
+-        kernel_initializer=tf.keras.initializers.he_normal(seed=seed),
+-        kernel_regularizer=tf.keras.regularizers.l2(L2_LAMBDA),
+-    )
+-    if dropout:
+-        residual = tf.nn.dropout(residual, dropout_prob, seed=seed)
+-
+-    return residual
+-
+-
+-def one_residual(x, keep_prob=0.5, seed=None):
+-    nn = tf.layers.conv2d(
+-        x,
+-        filters=32,
+-        kernel_size=5,
+-        strides=2,
+-        padding="same",
+-        kernel_initializer=tf.keras.initializers.he_normal(seed=seed),
+-        kernel_regularizer=tf.keras.regularizers.l2(L2_LAMBDA),
+-    )
+-    nn = tf.layers.max_pooling2d(nn, pool_size=3, strides=2)
+-
+-    rb_1 = _residual_block(nn, 32, dropout_prob=keep_prob, seed=seed)
+-
+-    nn = tf.layers.conv2d(
+-        nn,
+-        filters=32,
+-        kernel_size=1,
+-        strides=2,
+-        padding="same",
+-        kernel_initializer=tf.keras.initializers.he_normal(seed=seed),
+-        kernel_regularizer=tf.keras.regularizers.l2(L2_LAMBDA),
+-    )
+-    nn = tf.keras.layers.add([rb_1, nn])
+-
+-    nn = tf.layers.flatten(nn)
+-
+-    return nn
+diff --git a/learning/imitation/tensorflow/model.py b/learning/imitation/tensorflow/model.py
+deleted file mode 100644
+index 1517a7f..0000000
+--- a/learning/imitation/tensorflow/model.py
++++ /dev/null
+@@ -1,101 +0,0 @@
+-import numpy as np
+-import tensorflow as tf
+-
+-from imitation.tensorflow._layers import one_residual
+-
+-
+-class TensorflowModel:
+-    def __init__(self, observation_shape, action_shape, graph_location, seed=1234):
+-        # model definition
+-        self._observation = None
+-        self._action = None
+-        self._computation_graph = None
+-        self._optimization_op = None
+-
+-        self.tf_session = tf.InteractiveSession()
+-
+-        # restoring
+-        self.tf_checkpoint = None
+-        self.tf_saver = None
+-
+-        self.seed = seed
+-
+-        self._initialize(observation_shape, action_shape, graph_location)
+-
+-    def predict(self, state):
+-        action = self.tf_session.run(
+-            self._computation_graph,
+-            feed_dict={
+-                self._observation: [state],
+-            },
+-        )
+-        return np.squeeze(action)
+-
+-    def train(self, observations, actions):
+-        _, loss = self.tf_session.run(
+-            [self._optimization_op, self._loss],
+-            feed_dict={self._observation: observations, self._action: actions},
+-        )
+-        return loss
+-
+-    def commit(self):
+-        self.tf_saver.save(self.tf_session, self.tf_checkpoint)
+-
+-    def computation_graph(self):
+-        model = one_residual(self._preprocessed_state, seed=self.seed)
+-        model = tf.layers.dense(
+-            model,
+-            units=64,
+-            activation=tf.nn.relu,
+-            kernel_initializer=tf.contrib.layers.xavier_initializer(uniform=False, seed=self.seed),
+-            bias_initializer=tf.contrib.layers.xavier_initializer(uniform=False, seed=self.seed),
+-        )
+-        model = tf.layers.dense(
+-            model,
+-            units=32,
+-            activation=tf.nn.relu,
+-            kernel_initializer=tf.contrib.layers.xavier_initializer(uniform=False, seed=self.seed),
+-            bias_initializer=tf.contrib.layers.xavier_initializer(uniform=False, seed=self.seed),
+-        )
+-
+-        model = tf.layers.dense(model, self._action.shape[1])
+-
+-        return model
+-
+-    def _optimizer(self):
+-        return tf.train.AdamOptimizer()
+-
+-    def _loss_function(self):
+-        return tf.losses.mean_squared_error(self._action, self._computation_graph)
+-
+-    def _initialize(self, input_shape, action_shape, storage_location):
+-        if not self._computation_graph:
+-            self._create(input_shape, action_shape)
+-            self._storing(storage_location)
+-            self.tf_session.run(tf.global_variables_initializer())
+-
+-    def _pre_process(self):
+-        resize = tf.map_fn(lambda frame: tf.image.resize_images(frame, (60, 80)), self._observation)
+-        and_standardize = tf.map_fn(lambda frame: tf.image.per_image_standardization(frame), resize)
+-        self._preprocessed_state = and_standardize
+-
+-    def _create(self, input_shape, output_shape):
+-        self._observation = tf.placeholder(dtype=tf.float32, shape=input_shape, name="state")
+-        self._action = tf.placeholder(dtype=tf.float32, shape=output_shape, name="action")
+-        self._pre_process()
+-
+-        self._computation_graph = self.computation_graph()
+-        self._loss = self._loss_function()
+-        self._optimization_op = self._optimizer().minimize(self._loss)
+-
+-    def _storing(self, location):
+-        self.tf_saver = tf.train.Saver()
+-
+-        self.tf_checkpoint = tf.train.latest_checkpoint(location)
+-        if self.tf_checkpoint:
+-            self.tf_saver.restore(self.tf_session, self.tf_checkpoint)
+-        else:
+-            self.tf_checkpoint = location
+-
+-    def close(self):
+-        self.tf_session.close()
+diff --git a/learning/imitation/tensorflow/models/__init__.py b/learning/imitation/tensorflow/models/__init__.py
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/learning/imitation/tensorflow/train_imitation.py b/learning/imitation/tensorflow/train_imitation.py
+deleted file mode 100644
+index 296ff6f..0000000
+--- a/learning/imitation/tensorflow/train_imitation.py
++++ /dev/null
+@@ -1,88 +0,0 @@
+-#!/usr/bin/env python3
+-
+-import argparse
+-import sys
+-import numpy as np
+-
+-from utils.teacher import PurePursuitExpert
+-from utils.env import launch_env
+-from utils.wrappers import NormalizeWrapper, DtRewardWrapper, ActionWrapper, ResizeWrapper
+-
+-from imitation.tensorflow.model import TensorflowModel
+-
+-
+-def _train(args):
+-    print("Running Expert for {} Episodes of {} Steps".format(args.episodes, args.steps))
+-    print("Training Learning for {} Epochs with Batch Size of {}".format(args.epochs, args.batch_size))
+-
+-    env = launch_env()
+-    env = ResizeWrapper(env)
+-    env = NormalizeWrapper(env)
+-    env = ActionWrapper(env)
+-    env = DtRewardWrapper(env)
+-    print("Initialized Wrappers")
+-
+-    observation_shape = (None,) + env.observation_space.shape
+-    action_shape = (None,) + env.action_space.shape
+-
+-    # Create an imperfect demonstrator
+-    expert = PurePursuitExpert(env=env)
+-
+-    observations = []
+-    actions = []
+-
+-    # let's collect our samples
+-    for episode in range(0, args.episodes):
+-        print("Starting episode", episode)
+-        for steps in range(0, args.steps):
+-            # use our 'expert' to predict the next action.
+-            action = expert.predict(None)
+-            observation, reward, done, info = env.step(action)
+-            observations.append(observation)
+-            actions.append(action)
+-
+-        env.reset()
+-
+-    env.close()
+-
+-    actions = np.array(actions)
+-    observations = np.array(observations)
+-
+-    model = TensorflowModel(
+-        observation_shape=observation_shape,  # from the logs we've got
+-        action_shape=action_shape,  # same
+-        graph_location=args.model_directory,  # where do we want to store our trained models
+-        seed=args.seed,  # to seed all random operations in the model (e.g., dropout)
+-    )
+-
+-    for i in range(args.epochs):
+-        # we defined the batch size, this can be adjusted according to your computing resources
+-        loss = None
+-        for batch in range(0, len(observations), args.batch_size):
+-            print("Training batch", batch)
+-            loss = model.train(
+-                observations=observations[batch : batch + args.batch_size],
+-                actions=actions[batch : batch + args.batch_size],
+-            )
+-
+-        # every 10 epochs, we store the model we have
+-        if i % 10 == 0:
+-            model.commit()
+-
+-    print("Training complete!")
+-
+-
+-if __name__ == "__main__":
+-    parser = argparse.ArgumentParser()
+-    parser.add_argument("--seed", default=1234, type=int, help="Sets Gym, TF, and Numpy seeds")
+-    parser.add_argument("--episodes", default=3, type=int, help="Number of epsiodes for experts")
+-    parser.add_argument("--steps", default=50, type=int, help="Number of steps per episode")
+-    parser.add_argument("--batch-size", default=32, type=int, help="Training batch size")
+-    parser.add_argument("--epochs", default=1, type=int, help="Number of training epochs")
+-    parser.add_argument(
+-        "--model-directory", default="imitation/tensorflow/models/", type=str, help="Where to save models"
+-    )
+-
+-    args = parser.parse_args()
+-
+-    _train(args)
+diff --git a/learning/reinforcement/pytorch/__init__.py b/learning/reinforcement/pytorch/__init__.py
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/learning/reinforcement/pytorch/ddpg.py b/learning/reinforcement/pytorch/ddpg.py
+deleted file mode 100644
+index 203200b..0000000
+--- a/learning/reinforcement/pytorch/ddpg.py
++++ /dev/null
+@@ -1,238 +0,0 @@
+-import functools
+-import operator
+-
+-import numpy as np
+-import torch
+-import torch.nn as nn
+-import torch.nn.functional as F
+-
+-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+-
+-
+-# Implementation of Deep Deterministic Policy Gradients (DDPG)
+-# Paper: https://arxiv.org/abs/1509.02971
+-
+-
+-class ActorDense(nn.Module):
+-    def __init__(self, state_dim, action_dim, max_action):
+-        super(ActorDense, self).__init__()
+-
+-        state_dim = functools.reduce(operator.mul, state_dim, 1)
+-
+-        self.l1 = nn.Linear(state_dim, 400)
+-        self.l2 = nn.Linear(400, 300)
+-        self.l3 = nn.Linear(300, action_dim)
+-
+-        self.max_action = max_action
+-
+-        self.tanh = nn.Tanh()
+-
+-    def forward(self, x):
+-        x = F.relu(self.l1(x))
+-        x = F.relu(self.l2(x))
+-        x = self.max_action * self.tanh(self.l3(x))
+-        return x
+-
+-
+-class ActorCNN(nn.Module):
+-    def __init__(self, action_dim, max_action):
+-        super(ActorCNN, self).__init__()
+-
+-        # ONLY TRU IN CASE OF DUCKIETOWN:
+-        flat_size = 32 * 9 * 14
+-
+-        self.lr = nn.LeakyReLU()
+-        self.tanh = nn.Tanh()
+-        self.sigm = nn.Sigmoid()
+-
+-        self.conv1 = nn.Conv2d(3, 32, 8, stride=2)
+-        self.conv2 = nn.Conv2d(32, 32, 4, stride=2)
+-        self.conv3 = nn.Conv2d(32, 32, 4, stride=2)
+-        self.conv4 = nn.Conv2d(32, 32, 4, stride=1)
+-
+-        self.bn1 = nn.BatchNorm2d(32)
+-        self.bn2 = nn.BatchNorm2d(32)
+-        self.bn3 = nn.BatchNorm2d(32)
+-        self.bn4 = nn.BatchNorm2d(32)
+-
+-        self.dropout = nn.Dropout(0.5)
+-
+-        self.lin1 = nn.Linear(flat_size, 512)
+-        self.lin2 = nn.Linear(512, action_dim)
+-
+-        self.max_action = max_action
+-
+-    def forward(self, x):
+-        x = self.bn1(self.lr(self.conv1(x)))
+-        x = self.bn2(self.lr(self.conv2(x)))
+-        x = self.bn3(self.lr(self.conv3(x)))
+-        x = self.bn4(self.lr(self.conv4(x)))
+-        x = x.view(x.size(0), -1)  # flatten
+-        x = self.dropout(x)
+-        x = self.lr(self.lin1(x))
+-
+-        # this is the vanilla implementation
+-        # but we're using a slightly different one
+-        # x = self.max_action * self.tanh(self.lin2(x))
+-
+-        # because we don't want our duckie to go backwards
+-        x = self.lin2(x)
+-        x[:, 0] = self.max_action * self.sigm(x[:, 0])  # because we don't want the duckie to go backwards
+-        x[:, 1] = self.tanh(x[:, 1])
+-
+-        return x
+-
+-
+-class CriticDense(nn.Module):
+-    def __init__(self, state_dim, action_dim):
+-        super(CriticDense, self).__init__()
+-
+-        state_dim = functools.reduce(operator.mul, state_dim, 1)
+-
+-        self.l1 = nn.Linear(state_dim, 400)
+-        self.l2 = nn.Linear(400 + action_dim, 300)
+-        self.l3 = nn.Linear(300, 1)
+-
+-    def forward(self, x, u):
+-        x = F.relu(self.l1(x))
+-        x = F.relu(self.l2(torch.cat([x, u], 1)))
+-        x = self.l3(x)
+-        return x
+-
+-
+-class CriticCNN(nn.Module):
+-    def __init__(self, action_dim):
+-        super(CriticCNN, self).__init__()
+-
+-        flat_size = 32 * 9 * 14
+-
+-        self.lr = nn.LeakyReLU()
+-
+-        self.conv1 = nn.Conv2d(3, 32, 8, stride=2)
+-        self.conv2 = nn.Conv2d(32, 32, 4, stride=2)
+-        self.conv3 = nn.Conv2d(32, 32, 4, stride=2)
+-        self.conv4 = nn.Conv2d(32, 32, 4, stride=1)
+-
+-        self.bn1 = nn.BatchNorm2d(32)
+-        self.bn2 = nn.BatchNorm2d(32)
+-        self.bn3 = nn.BatchNorm2d(32)
+-        self.bn4 = nn.BatchNorm2d(32)
+-
+-        self.dropout = nn.Dropout(0.5)
+-
+-        self.lin1 = nn.Linear(flat_size, 256)
+-        self.lin2 = nn.Linear(256 + action_dim, 128)
+-        self.lin3 = nn.Linear(128, 1)
+-
+-    def forward(self, states, actions):
+-        x = self.bn1(self.lr(self.conv1(states)))
+-        x = self.bn2(self.lr(self.conv2(x)))
+-        x = self.bn3(self.lr(self.conv3(x)))
+-        x = self.bn4(self.lr(self.conv4(x)))
+-        x = x.view(x.size(0), -1)  # flatten
+-        x = self.lr(self.lin1(x))
+-        x = self.lr(self.lin2(torch.cat([x, actions], 1)))  # c
+-        x = self.lin3(x)
+-
+-        return x
+-
+-
+-class DDPG(object):
+-    def __init__(self, state_dim, action_dim, max_action, net_type):
+-        super(DDPG, self).__init__()
+-        print("Starting DDPG init")
+-        assert net_type in ["cnn", "dense"]
+-
+-        self.state_dim = state_dim
+-
+-        if net_type == "dense":
+-            self.flat = True
+-            self.actor = ActorDense(state_dim, action_dim, max_action).to(device)
+-            self.actor_target = ActorDense(state_dim, action_dim, max_action).to(device)
+-        else:
+-            self.flat = False
+-            self.actor = ActorCNN(action_dim, max_action).to(device)
+-            self.actor_target = ActorCNN(action_dim, max_action).to(device)
+-
+-        print("Initialized Actor")
+-        self.actor_target.load_state_dict(self.actor.state_dict())
+-        self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=1e-4)
+-        print("Initialized Target+Opt [Actor]")
+-        if net_type == "dense":
+-            self.critic = CriticDense(state_dim, action_dim).to(device)
+-            self.critic_target = CriticDense(state_dim, action_dim).to(device)
+-        else:
+-            self.critic = CriticCNN(action_dim).to(device)
+-            self.critic_target = CriticCNN(action_dim).to(device)
+-        print("Initialized Critic")
+-        self.critic_target.load_state_dict(self.critic.state_dict())
+-        self.critic_optimizer = torch.optim.Adam(self.critic.parameters())
+-        print("Initialized Target+Opt [Critic]")
+-
+-    def predict(self, state):
+-
+-        # just making sure the state has the correct format, otherwise the prediction doesn't work
+-        assert state.shape[0] == 3
+-
+-        if self.flat:
+-            state = torch.FloatTensor(state.reshape(1, -1)).to(device)
+-        else:
+-            state = torch.FloatTensor(np.expand_dims(state, axis=0)).to(device)
+-        return self.actor(state).cpu().data.numpy().flatten()
+-
+-    def train(self, replay_buffer, iterations, batch_size=64, discount=0.99, tau=0.001):
+-
+-        for it in range(iterations):
+-
+-            # Sample replay buffer
+-            sample = replay_buffer.sample(batch_size, flat=self.flat)
+-            state = torch.FloatTensor(sample["state"]).to(device)
+-            action = torch.FloatTensor(sample["action"]).to(device)
+-            next_state = torch.FloatTensor(sample["next_state"]).to(device)
+-            done = torch.FloatTensor(1 - sample["done"]).to(device)
+-            reward = torch.FloatTensor(sample["reward"]).to(device)
+-
+-            # Compute the target Q value
+-            target_Q = self.critic_target(next_state, self.actor_target(next_state))
+-            target_Q = reward + (done * discount * target_Q).detach()
+-
+-            # Get current Q estimate
+-            current_Q = self.critic(state, action)
+-
+-            # Compute critic loss
+-            critic_loss = F.mse_loss(current_Q, target_Q)
+-
+-            # Optimize the critic
+-            self.critic_optimizer.zero_grad()
+-            critic_loss.backward()
+-            self.critic_optimizer.step()
+-
+-            # Compute actor loss
+-            actor_loss = -self.critic(state, self.actor(state)).mean()
+-
+-            # Optimize the actor
+-            self.actor_optimizer.zero_grad()
+-            actor_loss.backward()
+-            self.actor_optimizer.step()
+-
+-            # Update the frozen target models
+-            for param, target_param in zip(self.critic.parameters(), self.critic_target.parameters()):
+-                target_param.data.copy_(tau * param.data + (1 - tau) * target_param.data)
+-
+-            for param, target_param in zip(self.actor.parameters(), self.actor_target.parameters()):
+-                target_param.data.copy_(tau * param.data + (1 - tau) * target_param.data)
+-
+-    def save(self, filename, directory):
+-        print("Saving to {}/{}_[actor|critic].pth".format(directory, filename))
+-        torch.save(self.actor.state_dict(), "{}/{}_actor.pth".format(directory, filename))
+-        print("Saved Actor")
+-        torch.save(self.critic.state_dict(), "{}/{}_critic.pth".format(directory, filename))
+-        print("Saved Critic")
+-
+-    def load(self, filename, directory):
+-        self.actor.load_state_dict(
+-            torch.load("{}/{}_actor.pth".format(directory, filename), map_location=device)
+-        )
+-        self.critic.load_state_dict(
+-            torch.load("{}/{}_critic.pth".format(directory, filename), map_location=device)
+-        )
+diff --git a/learning/reinforcement/pytorch/enjoy_reinforcement.py b/learning/reinforcement/pytorch/enjoy_reinforcement.py
+deleted file mode 100644
+index 0b1bb6d..0000000
+--- a/learning/reinforcement/pytorch/enjoy_reinforcement.py
++++ /dev/null
+@@ -1,49 +0,0 @@
+-import ast
+-import argparse
+-import logging
+-
+-import os
+-import numpy as np
+-
+-# Duckietown Specific
+-from reinforcement.pytorch.ddpg import DDPG
+-from utils.env import launch_env
+-from utils.wrappers import NormalizeWrapper, ImgWrapper, DtRewardWrapper, ActionWrapper, ResizeWrapper
+-
+-
+-def _enjoy():
+-    # Launch the env with our helper function
+-    env = launch_env()
+-    print("Initialized environment")
+-
+-    # Wrappers
+-    env = ResizeWrapper(env)
+-    env = NormalizeWrapper(env)
+-    env = ImgWrapper(env)  # to make the images from 160x120x3 into 3x160x120
+-    env = ActionWrapper(env)
+-    env = DtRewardWrapper(env)
+-    print("Initialized Wrappers")
+-
+-    state_dim = env.observation_space.shape
+-    action_dim = env.action_space.shape[0]
+-    max_action = float(env.action_space.high[0])
+-
+-    # Initialize policy
+-    policy = DDPG(state_dim, action_dim, max_action, net_type="cnn")
+-    policy.load(filename="ddpg", directory="reinforcement/pytorch/models/")
+-
+-    obs = env.reset()
+-    done = False
+-
+-    while True:
+-        while not done:
+-            action = policy.predict(np.array(obs))
+-            # Perform action
+-            obs, reward, done, _ = env.step(action)
+-            env.render()
+-        done = False
+-        obs = env.reset()
+-
+-
+-if __name__ == "__main__":
+-    _enjoy()
+diff --git a/learning/reinforcement/pytorch/models/__init__.py b/learning/reinforcement/pytorch/models/__init__.py
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/learning/reinforcement/pytorch/results/__init__.py b/learning/reinforcement/pytorch/results/__init__.py
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/learning/reinforcement/pytorch/train_reinforcement.py b/learning/reinforcement/pytorch/train_reinforcement.py
+deleted file mode 100644
+index 3d0e0ef..0000000
+--- a/learning/reinforcement/pytorch/train_reinforcement.py
++++ /dev/null
+@@ -1,148 +0,0 @@
+-import ast
+-import argparse
+-import logging
+-
+-import os
+-import numpy as np
+-
+-# Duckietown Specific
+-from reinforcement.pytorch.ddpg import DDPG
+-from reinforcement.pytorch.utils import seed, evaluate_policy, ReplayBuffer
+-from utils.env import launch_env
+-from utils.wrappers import NormalizeWrapper, ImgWrapper, DtRewardWrapper, ActionWrapper, ResizeWrapper
+-
+-logger = logging.getLogger(__name__)
+-logger.setLevel(logging.DEBUG)
+-
+-
+-def _train(args):
+-    if not os.path.exists("./results"):
+-        os.makedirs("./results")
+-    if not os.path.exists(args.model_dir):
+-        os.makedirs(args.model_dir)
+-
+-    # Launch the env with our helper function
+-    env = launch_env()
+-    print("Initialized environment")
+-
+-    # Wrappers
+-    env = ResizeWrapper(env)
+-    env = NormalizeWrapper(env)
+-    env = ImgWrapper(env)  # to make the images from 160x120x3 into 3x160x120
+-    env = ActionWrapper(env)
+-    env = DtRewardWrapper(env)
+-    print("Initialized Wrappers")
+-
+-    # Set seeds
+-    seed(args.seed)
+-
+-    state_dim = env.observation_space.shape
+-    action_dim = env.action_space.shape[0]
+-    max_action = float(env.action_space.high[0])
+-
+-    # Initialize policy
+-    policy = DDPG(state_dim, action_dim, max_action, net_type="cnn")
+-    replay_buffer = ReplayBuffer(args.replay_buffer_max_size)
+-    print("Initialized DDPG")
+-
+-    # Evaluate untrained policy
+-    evaluations = [evaluate_policy(env, policy)]
+-
+-    total_timesteps = 0
+-    timesteps_since_eval = 0
+-    episode_num = 0
+-    done = True
+-    episode_reward = None
+-    env_counter = 0
+-    reward = 0
+-    episode_timesteps = 0
+-    print("Starting training")
+-    while total_timesteps < args.max_timesteps:
+-
+-        print("timestep: {} | reward: {}".format(total_timesteps, reward))
+-
+-        if done:
+-            if total_timesteps != 0:
+-                print(
+-                    ("Total T: %d Episode Num: %d Episode T: %d Reward: %f")
+-                    % (total_timesteps, episode_num, episode_timesteps, episode_reward)
+-                )
+-                policy.train(replay_buffer, episode_timesteps, args.batch_size, args.discount, args.tau)
+-
+-                # Evaluate episode
+-                if timesteps_since_eval >= args.eval_freq:
+-                    timesteps_since_eval %= args.eval_freq
+-                    evaluations.append(evaluate_policy(env, policy))
+-                    print("rewards at time {}: {}".format(total_timesteps, evaluations[-1]))
+-
+-                    if args.save_models:
+-                        policy.save(file_name="ddpg", directory=args.model_dir)
+-                    np.savez("./results/rewards.npz", evaluations)
+-
+-            # Reset environment
+-            env_counter += 1
+-            obs = env.reset()
+-            done = False
+-            episode_reward = 0
+-            episode_num += 1
+-
+-        # Select action randomly or according to policy
+-        if total_timesteps < args.start_timesteps:
+-            action = env.action_space.sample()
+-        else:
+-            action = policy.predict(np.array(obs))
+-            if args.expl_noise != 0:
+-                action = (action + np.random.normal(0, args.expl_noise, size=env.action_space.shape[0])).clip(
+-                    env.action_space.low, env.action_space.high
+-                )
+-
+-        # Perform action
+-        new_obs, reward, done, _ = env.step(action)
+-
+-        if episode_timesteps >= args.env_timesteps:
+-            done = True
+-
+-        done_bool = 0 if episode_timesteps + 1 == args.env_timesteps else float(done)
+-        episode_reward += reward
+-
+-        # Store data in replay buffer
+-        replay_buffer.add(obs, new_obs, action, reward, done_bool)
+-
+-        obs = new_obs
+-
+-        episode_timesteps += 1
+-        total_timesteps += 1
+-        timesteps_since_eval += 1
+-
+-    print("Training done, about to save..")
+-    policy.save(filename="ddpg", directory=args.model_dir)
+-    print("Finished saving..should return now!")
+-
+-
+-if __name__ == "__main__":
+-    parser = argparse.ArgumentParser()
+-
+-    # DDPG Args
+-    parser.add_argument("--seed", default=0, type=int)  # Sets Gym, PyTorch and Numpy seeds
+-    parser.add_argument(
+-        "--start_timesteps", default=1e4, type=int
+-    )  # How many time steps purely random policy is run for
+-    parser.add_argument("--eval_freq", default=5e3, type=float)  # How often (time steps) we evaluate
+-    parser.add_argument("--max_timesteps", default=1e6, type=float)  # Max time steps to run environment for
+-    parser.add_argument("--save_models", action="store_true", default=True)  # Whether or not models are saved
+-    parser.add_argument("--expl_noise", default=0.1, type=float)  # Std of Gaussian exploration noise
+-    parser.add_argument("--batch_size", default=32, type=int)  # Batch size for both actor and critic
+-    parser.add_argument("--discount", default=0.99, type=float)  # Discount factor
+-    parser.add_argument("--tau", default=0.005, type=float)  # Target network update rate
+-    parser.add_argument(
+-        "--policy_noise", default=0.2, type=float
+-    )  # Noise added to target policy during critic update
+-    parser.add_argument("--noise_clip", default=0.5, type=float)  # Range to clip target policy noise
+-    parser.add_argument("--policy_freq", default=2, type=int)  # Frequency of delayed policy updates
+-    parser.add_argument("--env_timesteps", default=500, type=int)  # Frequency of delayed policy updates
+-    parser.add_argument(
+-        "--replay_buffer_max_size", default=10000, type=int
+-    )  # Maximum number of steps to keep in the replay buffer
+-    parser.add_argument("--model-dir", type=str, default="reinforcement/pytorch/models/")
+-
+-    _train(parser.parse_args())
+diff --git a/learning/reinforcement/pytorch/utils.py b/learning/reinforcement/pytorch/utils.py
+deleted file mode 100644
+index 044e194..0000000
+--- a/learning/reinforcement/pytorch/utils.py
++++ /dev/null
+@@ -1,73 +0,0 @@
+-import random
+-
+-import gym
+-import numpy as np
+-import torch
+-
+-
+-def seed(seed):
+-    torch.manual_seed(seed)
+-    np.random.seed(seed)
+-    random.seed(seed)
+-
+-
+-# Code based on:
+-# https://github.com/openai/baselines/blob/master/baselines/deepq/replay_buffer.py
+-
+-# Simple replay buffer
+-class ReplayBuffer(object):
+-    def __init__(self, max_size):
+-        self.storage = []
+-        self.max_size = max_size
+-
+-    # Expects tuples of (state, next_state, action, reward, done)
+-    def add(self, state, next_state, action, reward, done):
+-        if len(self.storage) < self.max_size:
+-            self.storage.append((state, next_state, action, reward, done))
+-        else:
+-            # Remove random element in the memory beforea adding a new one
+-            self.storage.pop(random.randrange(len(self.storage)))
+-            self.storage.append((state, next_state, action, reward, done))
+-
+-    def sample(self, batch_size=100, flat=True):
+-        ind = np.random.randint(0, len(self.storage), size=batch_size)
+-        states, next_states, actions, rewards, dones = [], [], [], [], []
+-
+-        for i in ind:
+-            state, next_state, action, reward, done = self.storage[i]
+-
+-            if flat:
+-                states.append(np.array(state, copy=False).flatten())
+-                next_states.append(np.array(next_state, copy=False).flatten())
+-            else:
+-                states.append(np.array(state, copy=False))
+-                next_states.append(np.array(next_state, copy=False))
+-            actions.append(np.array(action, copy=False))
+-            rewards.append(np.array(reward, copy=False))
+-            dones.append(np.array(done, copy=False))
+-
+-        # state_sample, action_sample, next_state_sample, reward_sample, done_sample
+-        return {
+-            "state": np.stack(states),
+-            "next_state": np.stack(next_states),
+-            "action": np.stack(actions),
+-            "reward": np.stack(rewards).reshape(-1, 1),
+-            "done": np.stack(dones).reshape(-1, 1),
+-        }
+-
+-
+-def evaluate_policy(env, policy, eval_episodes=10, max_timesteps=500):
+-    avg_reward = 0.0
+-    for _ in range(eval_episodes):
+-        obs = env.reset()
+-        done = False
+-        step = 0
+-        while not done and step < max_timesteps:
+-            action = policy.predict(np.array(obs))
+-            obs, reward, done, _ = env.step(action)
+-            avg_reward += reward
+-            step += 1
+-
+-    avg_reward /= eval_episodes
+-
+-    return avg_reward
+diff --git a/learning/utils/__init__.py b/learning/utils/__init__.py
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/learning/utils/env.py b/learning/utils/env.py
+deleted file mode 100644
+index 6eeaecb..0000000
+--- a/learning/utils/env.py
++++ /dev/null
+@@ -1,25 +0,0 @@
+-import gym
+-import gym_duckietown
+-
+-
+-def launch_env(id=None):
+-    env = None
+-    if id is None:
+-        # Launch the environment
+-        from gym_duckietown.simulator import Simulator
+-
+-        env = Simulator(
+-            seed=123,  # random seed
+-            map_name="loop_empty",
+-            max_steps=500001,  # we don't want the gym to reset itself
+-            domain_rand=False,
+-            camera_width=640,
+-            camera_height=480,
+-            accept_start_angle_deg=4,  # start close to straight
+-            full_transparency=True,
+-            distortion=True,
+-        )
+-    else:
+-        env = gym.make(id)
+-
+-    return env
+diff --git a/learning/utils/teacher.py b/learning/utils/teacher.py
+deleted file mode 100644
+index 2a7c2ea..0000000
+--- a/learning/utils/teacher.py
++++ /dev/null
+@@ -1,54 +0,0 @@
+-import numpy as np
+-
+-
+-# parameters for the pure pursuit controller
+-from gym_duckietown.simulator import get_right_vec
+-
+-POSITION_THRESHOLD = 0.04
+-REF_VELOCITY = 0.8
+-GAIN = 10
+-FOLLOWING_DISTANCE = 0.3
+-
+-
+-class PurePursuitExpert:
+-    def __init__(
+-        self,
+-        env,
+-        ref_velocity=REF_VELOCITY,
+-        position_threshold=POSITION_THRESHOLD,
+-        following_distance=FOLLOWING_DISTANCE,
+-        max_iterations=1000,
+-    ):
+-        self.env = env.unwrapped
+-        self.following_distance = following_distance
+-        self.max_iterations = max_iterations
+-        self.ref_velocity = ref_velocity
+-        self.position_threshold = position_threshold
+-
+-    def predict(self, observation):  # we don't really care about the observation for this implementation
+-        closest_point, closest_tangent = self.env.closest_curve_point(self.env.cur_pos, self.env.cur_angle)
+-
+-        iterations = 0
+-        lookup_distance = self.following_distance
+-        curve_point = None
+-        while iterations < self.max_iterations:
+-            # Project a point ahead along the curve tangent,
+-            # then find the closest point to to that
+-            follow_point = closest_point + closest_tangent * lookup_distance
+-            curve_point, _ = self.env.closest_curve_point(follow_point, self.env.cur_angle)
+-
+-            # If we have a valid point on the curve, stop
+-            if curve_point is not None:
+-                break
+-
+-            iterations += 1
+-            lookup_distance *= 0.5
+-
+-        # Compute a normalized vector to the curve point
+-        point_vec = curve_point - self.env.cur_pos
+-        point_vec /= np.linalg.norm(point_vec)
+-
+-        dot = np.dot(get_right_vec(self.env.cur_angle), point_vec)
+-        steering = GAIN * -dot
+-
+-        return self.ref_velocity, steering
+diff --git a/learning/utils/wrappers.py b/learning/utils/wrappers.py
+deleted file mode 100644
+index 18f7024..0000000
+--- a/learning/utils/wrappers.py
++++ /dev/null
+@@ -1,109 +0,0 @@
+-import gym
+-from gym import spaces
+-import numpy as np
+-
+-from gym_duckietown.simulator import Simulator
+-
+-
+-class MotionBlurWrapper(Simulator):
+-    def __init__(self, env=None):
+-        Simulator.__init__(self)
+-        self.env = env
+-        self.frame_skip = 3
+-        self.env.delta_time = self.env.delta_time / self.frame_skip
+-
+-    def step(self, action: np.ndarray):
+-        action = np.clip(action, -1, 1)
+-        # Actions could be a Python list
+-        action = np.array(action)
+-        motion_blur_window = []
+-        for _ in range(self.frame_skip):
+-            obs = self.env.render_obs()
+-            motion_blur_window.append(obs)
+-            self.env.update_physics(action)
+-
+-        # Generate the current camera image
+-
+-        obs = self.env.render_obs()
+-        motion_blur_window.append(obs)
+-        obs = np.average(motion_blur_window, axis=0, weights=[0.8, 0.15, 0.04, 0.01])
+-
+-        misc = self.env.get_agent_info()
+-
+-        d = self.env._compute_done_reward()
+-        misc["Simulator"]["msg"] = d.done_why
+-
+-        return obs, d.reward, d.done, misc
+-
+-
+-class ResizeWrapper(gym.ObservationWrapper):
+-    def __init__(self, env=None, shape=(120, 160, 3)):
+-        super(ResizeWrapper, self).__init__(env)
+-        self.observation_space.shape = shape
+-        self.observation_space = spaces.Box(
+-            self.observation_space.low[0, 0, 0],
+-            self.observation_space.high[0, 0, 0],
+-            shape,
+-            dtype=self.observation_space.dtype,
+-        )
+-        self.shape = shape
+-
+-    def observation(self, observation):
+-        from scipy.misc import imresize
+-
+-        return imresize(observation, self.shape)
+-
+-
+-class NormalizeWrapper(gym.ObservationWrapper):
+-    def __init__(self, env=None):
+-        super(NormalizeWrapper, self).__init__(env)
+-        self.obs_lo = self.observation_space.low[0, 0, 0]
+-        self.obs_hi = self.observation_space.high[0, 0, 0]
+-        obs_shape = self.observation_space.shape
+-        self.observation_space = spaces.Box(0.0, 1.0, obs_shape, dtype=np.float32)
+-
+-    def observation(self, obs):
+-        if self.obs_lo == 0.0 and self.obs_hi == 1.0:
+-            return obs
+-        else:
+-            return (obs - self.obs_lo) / (self.obs_hi - self.obs_lo)
+-
+-
+-class ImgWrapper(gym.ObservationWrapper):
+-    def __init__(self, env=None):
+-        super(ImgWrapper, self).__init__(env)
+-        obs_shape = self.observation_space.shape
+-        self.observation_space = spaces.Box(
+-            self.observation_space.low[0, 0, 0],
+-            self.observation_space.high[0, 0, 0],
+-            [obs_shape[2], obs_shape[0], obs_shape[1]],
+-            dtype=self.observation_space.dtype,
+-        )
+-
+-    def observation(self, observation):
+-        return observation.transpose(2, 0, 1)
+-
+-
+-class DtRewardWrapper(gym.RewardWrapper):
+-    def __init__(self, env):
+-        super(DtRewardWrapper, self).__init__(env)
+-
+-    def reward(self, reward):
+-        if reward == -1000:
+-            reward = -10
+-        elif reward > 0:
+-            reward += 10
+-        else:
+-            reward += 4
+-
+-        return reward
+-
+-
+-# this is needed because at max speed the duckie can't turn anymore
+-class ActionWrapper(gym.ActionWrapper):
+-    def __init__(self, env):
+-        super(ActionWrapper, self).__init__(env)
+-
+-    def action(self, action):
+-        action_ = [action[0] * 0.8, action[1]]
+-        return action_
+diff --git a/src/gym_duckietown/simulator.py b/src/gym_duckietown/simulator.py
+index 325d44f..c451535 100644
+--- a/src/gym_duckietown/simulator.py
++++ b/src/gym_duckietown/simulator.py
+@@ -373,8 +373,9 @@ class Simulator(gym.Env):
+         if self.randomize_maps_on_reset:
+             self.map_names = os.listdir(get_subdir_path("maps"))
+             self.map_names = [
+-                _map for _map in self.map_names if not _map.startswith(("calibration", "regress"))
++                _map for _map in self.map_names if not _map.startswith(("calibration", "regress", "test"))
+             ]
++            print('\n' + str(len(self.map_names)) + '\n')
+             self.map_names = [mapfile.replace(".yaml", "") for mapfile in self.map_names]
+ 
+         # Initialize the state
+diff --git a/src/gym_duckietown/wrappers.py b/src/gym_duckietown/wrappers.py
+index be78396..18a5be2 100644
+--- a/src/gym_duckietown/wrappers.py
++++ b/src/gym_duckietown/wrappers.py
+@@ -225,3 +225,42 @@ class UndistortWrapper(gym.ObservationWrapper):
+             )
+ 
+         return cv2.remap(observation, self.mapx, self.mapy, cv2.INTER_NEAREST)
++        
++	
++# this is needed because at max speed the duckie can't turn anymore
++class ActionWrapper(gym.ActionWrapper):
++    def __init__(self, env):
++        gym.ActionWrapper.__init__(self, env)
++
++    def action(self, action):
++        action_ = [action[0] * 0.8, action[1]]
++        return action_
++
++class NormalizeWrapper(gym.ObservationWrapper):
++    def __init__(self, env=None):
++        super(NormalizeWrapper, self).__init__(env)
++        self.obs_lo = self.observation_space.low[0, 0, 0]
++        self.obs_hi = self.observation_space.high[0, 0, 0]
++        obs_shape = self.observation_space.shape
++        self.observation_space = spaces.Box(0.0, 1.0, obs_shape, dtype=np.float32)
++
++    def observation(self, obs):
++        if self.obs_lo == 0.0 and self.obs_hi == 1.0:
++            return obs
++        else:
++            return (obs - self.obs_lo) / (self.obs_hi - self.obs_lo)
++
++
++class DtRewardWrapper(gym.RewardWrapper):
++    def __init__(self, env):
++        super(DtRewardWrapper, self).__init__(env)
++
++    def reward(self, reward):
++        if reward == -1000:
++            reward = -10
++        elif reward > 0:
++            reward += 10
++        else:
++            reward += 4
++
++        return reward
+\ No newline at end of file

@@ -1,0 +1,36 @@
+tiles:
+- [asphalt,       asphalt,       asphalt,       asphalt,       asphalt]
+- [asphalt,       curve_right/N, straight/W,    curve_left/N,  asphalt]
+- [asphalt,       straight/N,    asphalt,       straight/N,    asphalt]
+- [asphalt,       curve_right/W, straight/W,    curve_left/E,  asphalt]
+- [asphalt,       asphalt,       asphalt,       asphalt,       asphalt]
+
+
+objects:
+
+- kind: duckiebot
+  pos: [4.92, 4.86]
+  rotate: 260.78
+  height: 0.1
+
+- kind: sign_pedestrian
+  pos: [3.51, 0.25]
+  rotate: 349.51
+  height: 0.18
+
+- kind: bus
+  pos: [0.55, 3.62]
+  rotate: 4.39
+  height: 0.18
+
+- kind: sign_do_not_enter
+  pos: [2, 2]
+  rotate: 270.0
+  height: 0.18
+
+- kind: sign_do_not_enter
+  pos: [1.0, 2.0]
+  rotate: 90.0
+  height: 0.18
+
+tile_size: 0.585
