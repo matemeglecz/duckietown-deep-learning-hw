@@ -23,3 +23,14 @@ Steps of creating the environment
    ![myimage-alt-tag](/images/custom_map.png)
 8. With the following command we ran the basic control agent on our own map: `python3 ./exercises/basic_control.py --map-name maps/test_loop1`
 9. We have created a video of the basic control agent running. (/videos/basic_control.mov)
+
+## Milestone 2 
+
+### Map generation:
+
+Using [map-utils](https://github.com/duckietown/map-utils) we have generated 10 maps for training and 4 maps for testing. The can be found in /maps folder
+
+For example: ```python3 generator.py --width 6 --height 5 --no-intersections```
+
+After generation the tile size must be added to the end of the map files:
+```tile_size: 0.585```
