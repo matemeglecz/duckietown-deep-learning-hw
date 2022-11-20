@@ -26,7 +26,7 @@ Steps of creating the environment
 
 ## Milestone 2 
 
-Firstly, we had to resolve some package version issues. The python version is upgraded to python 3.8. We have realized that the previous milestone's modifications were unneccessary (we used the wrong gym version).
+First, we had to resolve some package version issues. The python version is upgraded to python 3.8. We have realized that the previous milestone's modifications were unneccessary (we used the wrong gym version).
 
 After that the we got the baseline_rl solution running. The solution's simulator was extended to use multiple maps for training, and also modified to not use maps which starts with "test". This baseline solution is now located in `gym-duckitown/learning` folder. The training script also logs to our Wandb project. For running this training: `python3 -m scripts.train_cnn.py --seed 123` For testing: `python3 -m scripts.test_cnn.py --seed 123`, this tests for test_map1.yaml.
 
@@ -35,7 +35,7 @@ As suggested we started to work in a rl library. The clean_rl repo was cloned an
 
 For being able to use the new maps, with this command `python map_move_to_duckietown.py`, maps can be copied to the correct site-packages.
 
-For getting the correct python packages a `requiremnts.txt` is located in the root folder, so the packages can be installed from that. The `gym-duckietown\src` dir has to be added to the PYTHONPATH enviroment variable so python uses our version of the gym-duckietown.
+For getting the correct python packages a `requirements.txt` is located in the root folder, so the packages can be installed from that. The `gym-duckietown\src` dir has to be added to the PYTHONPATH enviroment variable so python uses our version of the gym-duckietown.
 
 ### Map generation:
 
