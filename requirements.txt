@@ -10,7 +10,6 @@ cachetools==5.2.0
 cachy==0.3.0
 carnivalmirror==0.6.2
 cbor2==5.4.3
-certifi @ file:///croot/certifi_1665076670883/work/certifi
 cffi==1.15.1
 charset-normalizer==2.1.1
 cleo==1.0.0a5
