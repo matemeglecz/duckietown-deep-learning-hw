@@ -45,3 +45,6 @@ For example: ```python3 generator.py --width 6 --height 5 --no-intersections```
 
 After generation the tile size must be added to the end of the map files:
 ```tile_size: 0.585```
+
+
+export DISPLAY=:0
