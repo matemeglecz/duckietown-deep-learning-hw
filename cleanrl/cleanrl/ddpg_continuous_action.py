@@ -133,9 +133,9 @@ class QNetwork(nn.Module):
 class Actor(nn.Module):
     def __init__(self, env):
         super().__init__()
-        self.fc1 = nn.Linear(np.array(env.single_observation_space.shape).prod(), 256)
-        self.fc2 = nn.Linear(256, 256)
-        self.fc_mu = nn.Linear(256, np.prod(env.single_action_space.shape))
+        self.fc1 = nn.Linear(np.array(env.single_observation_space.shape).prod(), 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc_mu = nn.Linear(64, np.prod(env.single_action_space.shape))
         # action rescaling
         self.register_buffer(
             "action_scale", torch.tensor((env.action_space[0].high - env.action_space[0].low) / 2.0, dtype=torch.float32)
